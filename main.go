@@ -4,9 +4,9 @@ import (
 
 	// "github.com/labstack/echo"
 	"parkify-BE/config"
-	"parkify-BE/features/data"
-	"parkify-BE/features/handler"
-	"parkify-BE/features/services"
+	"parkify-BE/features/user/data"
+	"parkify-BE/features/user/handler"
+	"parkify-BE/features/user/services"
 	"parkify-BE/routes"
 
 	"github.com/labstack/echo/v4"

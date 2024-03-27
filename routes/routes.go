@@ -2,7 +2,7 @@ package routes
 
 import (
 	"parkify-BE/config"
-	user "parkify-BE/features"
+	user "parkify-BE/features/user"
 
 	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"

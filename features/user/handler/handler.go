@@ -2,12 +2,11 @@ package handler
 
 import (
 	"errors"
-	user "parkify-BE/features"
+	user "parkify-BE/features/user"
 	"parkify-BE/helper"
 
 	"log"
 	"net/http"
-	"strconv"
 	"strings"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -101,8 +100,8 @@ func (ct *controller) Login() echo.HandlerFunc {
 		}
 
 		var responseData LoginResponse
+		responseData.Fullname = result.Fullname
 		responseData.Email = result.Email
-		responseData.Nama = result.Nama
 		responseData.Token = token
 
 		return c.JSON(http.StatusOK,
@@ -113,12 +112,6 @@ func (ct *controller) Login() echo.HandlerFunc {
 
 func (ct *controller) Profile() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		userID, err := strconv.ParseUint(c.Param("user_id"), 10, 32)
-		if err != nil {
-			log.Println("error param:", err.Error())
-			return c.JSON(http.StatusBadRequest,
-				helper.ResponseFormat(http.StatusBadRequest, helper.UserInputError, nil))
-		}
 
 		token, ok := c.Get("user").(*jwt.Token)
 		if !ok {
@@ -126,7 +119,7 @@ func (ct *controller) Profile() echo.HandlerFunc {
 				helper.ResponseFormat(http.StatusBadRequest, helper.UserInputError, nil))
 		}
 
-		result, err := ct.service.Profile(token, uint(userID))
+		result, err := ct.service.Profile(token)
 		if err != nil {
 			// Jika tidak ada data profil yang ditemukan, kembalikan respons "not found"
 			if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -141,8 +134,7 @@ func (ct *controller) Profile() echo.HandlerFunc {
 		}
 
 		var response ProfileResponse
-		response.UserID = result.UserID
-		response.Nama = result.Nama
+		response.Email = result.Fullname
 		response.Email = result.Email
 
 		return c.JSON(http.StatusOK,

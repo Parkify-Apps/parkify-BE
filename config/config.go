@@ -3,7 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
-	"parkify-BE/features/data"
+	"parkify-BE/features/user/data"
 
 	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"

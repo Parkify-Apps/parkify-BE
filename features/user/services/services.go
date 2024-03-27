@@ -3,13 +3,12 @@ package services
 import (
 	"errors"
 	"log"
-	user "parkify-BE/features"
+	user "parkify-BE/features/user"
 	"parkify-BE/helper"
 	"parkify-BE/middlewares"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt/v5"
-	// "github.com/labstack/gommon/email"
 )
 
 type service struct {
@@ -29,19 +28,8 @@ func NewService(m user.UserModel) user.UserService {
 func (s *service) Register(newData user.User) error {
 	var registerValidate user.Register
 
-	// Mencari UserID terakhir dari database
-	lastUserID, error := s.model.GetLastUserID()
-	if error != nil {
-		return errors.New(helper.ServiceGeneralError)
-	}
-
-	// Menentukan UserID untuk pengguna baru
-	newUserID := lastUserID + 1
-	newData.UserID = newUserID
-
-	registerValidate.UserID = newData.UserID
+	registerValidate.Fullname = newData.Fullname
 	registerValidate.Email = newData.Email
-	registerValidate.Nama = newData.Nama
 	registerValidate.Password = newData.Password
 	err := s.v.Struct(&registerValidate)
 	if err != nil {
@@ -93,20 +81,20 @@ func (s *service) Login(loginData user.User) (user.User, string, error) {
 	return dbData, token, nil
 }
 
-func (s *service) Profile(token *jwt.Token, userID uint) (user.User, error) {
+func (s *service) Profile(token *jwt.Token) (user.User, error) {
 	decodeEmail := middlewares.DecodeToken(token)
 	if decodeEmail == "" {
 		log.Println("error decode token:", "token tidak ditemukan")
 		return user.User{}, errors.New("data tidak valid")
 	}
 
-	result, err := s.model.GetUserByID(userID)
+	result, err := s.model.Profile(decodeEmail)
 	if err != nil {
 		return user.User{}, err
 	}
 
 	if result.Email != decodeEmail {
-		return user.User{}, errors.New("anda tidak diizinkan mengakses profil pengguna lainn")
+		return user.User{}, errors.New("anda tidak diizinkan mengakses profil pengguna lain")
 	}
 
 	return result, nil
