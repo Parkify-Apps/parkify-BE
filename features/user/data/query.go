@@ -43,7 +43,7 @@ func (um *UserModel) Profile(email string) (user.User, error) {
 }
 
 func (um *UserModel) UpdateProfile(userID int, email string, data user.User) error {
-	var query = um.connection.Model(&User{}).Where("email = ? AND id = ?", email, userID).Update("fullname", data.Fullname).Update("email", data.Email)
+	var query = um.connection.Model(&User{}).Where("email = ? AND id = ?", email, userID).Updates(&data)
 	if err := query.Error; err != nil {
 		log.Print("error to database :", err.Error())
 		return err

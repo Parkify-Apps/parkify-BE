@@ -50,3 +50,9 @@ type Register struct {
 	Password string `validate:"required,alphanum,min=8"`
 	Role     bool   `validate:"required"`
 }
+
+type Update struct {
+	Fullname string
+	Email    string
+	Password string
+}

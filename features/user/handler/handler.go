@@ -169,22 +169,18 @@ func (ct *controller) UpdateProfile() echo.HandlerFunc {
 				helper.ResponseFormat(http.StatusBadRequest, helper.UserInputError, nil))
 		}
 
-		var updateProcess user.User
-		updateProcess.Fullname = input.Fullname
-		updateProcess.Email = input.Email
-
-		err = ct.service.UpdateProfile(int(userID), token, updateProcess)
+		err = ct.service.UpdateProfile(int(userID), token, input)
 		if err != nil {
 			log.Println("error update profile not found:", err.Error())
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				return c.JSON(http.StatusNotFound,
 					helper.ResponseFormat(http.StatusNotFound, "data tidak ditemukan", nil))
 			}
-			log.Println("error update profile forbidden:", err.Error())
 			if strings.Contains(err.Error(), "Field validation for 'Email'") {
 				return c.JSON(http.StatusBadRequest,
 					helper.ResponseFormat(http.StatusBadRequest, "Format harus berupa email", nil))
 			}
+			log.Println("error update profile forbidden:", err.Error())
 			return c.JSON(http.StatusForbidden,
 				helper.ResponseFormat(http.StatusForbidden, "Anda tidak diizinkan mengakses profil pengguna lain", nil))
 		}

@@ -108,23 +108,33 @@ func (s *service) UpdateProfile(userID int, token *jwt.Token, newData user.User)
 		return errors.New("data tidak valid")
 	}
 
-	user, error := s.model.GetUserByID(uint(userID))
+	u, error := s.model.GetUserByID(uint(userID))
 	if error != nil {
 		log.Println("error getting user:", error.Error())
 		return error
 	}
 
-	log.Print(email)
-
-	if user.Email != email {
+	if u.Email != email {
 		log.Println("error get account:", "user tidak sesuai")
 		return errors.New("user tidak sesuai")
 	}
 
-	err := s.v.Struct(&newData)
+	var validate user.Update
+	validate.Email = newData.Email
+	validate.Fullname = newData.Fullname
+	validate.Password = newData.Password
+	err := s.v.Struct(&validate)
 	if err != nil {
 		log.Println("error validasi", err.Error())
 		return err
+	}
+
+	if newData.Password != "" {
+		newPassword, err := s.pm.HashPassword(newData.Password)
+		if err != nil {
+			return errors.New(helper.ServerGeneralError)
+		}
+		newData.Password = newPassword
 	}
 
 	err = s.model.UpdateProfile(userID, email, newData)
