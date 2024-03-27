@@ -53,6 +53,5 @@ type Register struct {
 
 type Update struct {
 	Fullname string
-	Email    string
 	Password string
 }

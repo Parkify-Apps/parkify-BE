@@ -120,7 +120,6 @@ func (s *service) UpdateProfile(userID int, token *jwt.Token, newData user.User)
 	}
 
 	var validate user.Update
-	validate.Email = newData.Email
 	validate.Fullname = newData.Fullname
 	validate.Password = newData.Password
 	err := s.v.Struct(&validate)
