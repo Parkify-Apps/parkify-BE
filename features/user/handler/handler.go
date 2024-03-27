@@ -4,6 +4,7 @@ import (
 	"errors"
 	user "parkify-BE/features/user"
 	"parkify-BE/helper"
+	"strconv"
 
 	"log"
 	"net/http"
@@ -139,5 +140,89 @@ func (ct *controller) Profile() echo.HandlerFunc {
 
 		return c.JSON(http.StatusOK,
 			helper.ResponseFormat(http.StatusOK, "berhasil mendapatkan data", response))
+	}
+}
+
+func (ct *controller) UpdateProfile() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		userID, err := strconv.ParseUint(c.Param("id"), 10, 32)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest,
+				helper.ResponseFormat(http.StatusBadRequest, helper.UserInputError, nil))
+		}
+
+		token, ok := c.Get("user").(*jwt.Token)
+		if !ok {
+			return c.JSON(http.StatusBadRequest,
+				helper.ResponseFormat(http.StatusBadRequest, helper.UserInputError, nil))
+		}
+
+		var input user.User
+		err = c.Bind(&input)
+		if err != nil {
+			log.Println("error bind data:", err.Error())
+			if strings.Contains(err.Error(), "unsupport") {
+				return c.JSON(http.StatusUnsupportedMediaType,
+					helper.ResponseFormat(http.StatusUnsupportedMediaType, helper.UserInputFormatError, nil))
+			}
+			return c.JSON(http.StatusBadRequest,
+				helper.ResponseFormat(http.StatusBadRequest, helper.UserInputError, nil))
+		}
+
+		var updateProcess user.User
+		updateProcess.Fullname = input.Fullname
+		updateProcess.Email = input.Email
+
+		err = ct.service.UpdateProfile(int(userID), token, updateProcess)
+		if err != nil {
+			log.Println("error update profile not found:", err.Error())
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return c.JSON(http.StatusNotFound,
+					helper.ResponseFormat(http.StatusNotFound, "data tidak ditemukan", nil))
+			}
+			log.Println("error update profile forbidden:", err.Error())
+			if strings.Contains(err.Error(), "Field validation for 'Email'") {
+				return c.JSON(http.StatusBadRequest,
+					helper.ResponseFormat(http.StatusBadRequest, "Format harus berupa email", nil))
+			}
+			return c.JSON(http.StatusForbidden,
+				helper.ResponseFormat(http.StatusForbidden, "Anda tidak diizinkan mengakses profil pengguna lain", nil))
+		}
+
+		return c.JSON(http.StatusCreated, helper.ResponseFormat(http.StatusCreated, "berhasil merubah profile", nil))
+	}
+}
+
+func (ct *controller) DeleteAccount() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		userID, err := strconv.ParseUint(c.Param("id"), 10, 32)
+		if err != nil {
+			log.Println("error param:", err.Error())
+			return c.JSON(http.StatusBadRequest,
+				helper.ResponseFormat(http.StatusBadRequest, helper.UserInputError, nil))
+		}
+
+		token, ok := c.Get("user").(*jwt.Token)
+		if !ok {
+			log.Println("error token:", err.Error())
+			return c.JSON(http.StatusBadRequest,
+				helper.ResponseFormat(http.StatusBadRequest, helper.UserInputError, nil))
+		}
+
+		err = ct.service.DeleteAccount(uint(userID), token)
+		if err != nil {
+			log.Println("error deleting account:", err.Error())
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return c.JSON(http.StatusNotFound,
+					helper.ResponseFormat(http.StatusNotFound, "data tidak ditemukan", nil))
+			}
+			// Jika terjadi kesalahan lain selain "record not found",
+			// kembalikan respons forbidden
+			log.Println("error Deleting profile:", err.Error())
+			return c.JSON(http.StatusForbidden,
+				helper.ResponseFormat(http.StatusForbidden, "Anda tidak diizinkan menghapus profil pengguna lain", nil))
+		}
+
+		return c.JSON(http.StatusCreated, helper.ResponseFormat(http.StatusCreated, "berhasil menghapus akun", nil))
 	}
 }

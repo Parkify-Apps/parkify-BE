@@ -31,6 +31,7 @@ func (s *service) Register(newData user.User) error {
 	registerValidate.Fullname = newData.Fullname
 	registerValidate.Email = newData.Email
 	registerValidate.Password = newData.Password
+	registerValidate.Role = newData.Role
 	err := s.v.Struct(&registerValidate)
 	if err != nil {
 		log.Println("error validasi", err.Error())
@@ -98,4 +99,66 @@ func (s *service) Profile(token *jwt.Token) (user.User, error) {
 	}
 
 	return result, nil
+}
+
+func (s *service) UpdateProfile(userID int, token *jwt.Token, newData user.User) error {
+	email := middlewares.DecodeToken(token)
+	if email == "" {
+		log.Println("error decode token:", "token tidak ditemukan")
+		return errors.New("data tidak valid")
+	}
+
+	user, error := s.model.GetUserByID(uint(userID))
+	if error != nil {
+		log.Println("error getting user:", error.Error())
+		return error
+	}
+
+	log.Print(email)
+
+	if user.Email != email {
+		log.Println("error get account:", "user tidak sesuai")
+		return errors.New("user tidak sesuai")
+	}
+
+	err := s.v.Struct(&newData)
+	if err != nil {
+		log.Println("error validasi", err.Error())
+		return err
+	}
+
+	err = s.model.UpdateProfile(userID, email, newData)
+	if err != nil {
+		log.Print("error update to model: ", err.Error())
+		return errors.New(helper.ServerGeneralError)
+	}
+
+	return nil
+}
+
+func (s *service) DeleteAccount(userID uint, token *jwt.Token) error {
+	email := middlewares.DecodeToken(token)
+	if email == "" {
+		log.Println("error decode token:", "token tidak ditemukan")
+		return errors.New("data tidak valid")
+	}
+
+	user, err := s.model.GetUserByID(userID)
+	if err != nil {
+		log.Println("error getting user:", err.Error())
+		return err
+	}
+
+	if user.Email != email {
+		log.Println("error deleting account:", "user tidak sesuai")
+		return errors.New("user tidak sesuai")
+	}
+
+	error := s.model.Delete(userID, email)
+	if error != nil {
+		log.Print("error delete to model: ", error.Error())
+		return errors.New(helper.ServerGeneralError)
+	}
+
+	return nil
 }
