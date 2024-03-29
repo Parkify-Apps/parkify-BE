@@ -7,6 +7,9 @@ import (
 	"parkify-BE/features/user/data"
 	"parkify-BE/features/user/handler"
 	"parkify-BE/features/user/services"
+	pd "parkify-BE/features/parking/data"
+	ph "parkify-BE/features/parking/handler"
+	ps "parkify-BE/features/parking/services"
 	"parkify-BE/routes"
 
 	"github.com/labstack/echo/v4"
@@ -22,9 +25,13 @@ func main() {
 	userService := services.NewService(userData)
 	userHandler := handler.NewUserHandler(userService)
 
+	parkingData := pd.New(db)
+	parkingService := ps.NewService(parkingData)
+	parkingHandler := ph.NewHandler(parkingService)
+
 	e.Pre(middleware.RemoveTrailingSlash())
 	e.Use(middleware.Logger())
 	e.Use(middleware.CORS())
-	routes.InitRoute(e, userHandler)
+	routes.InitRoute(e, userHandler, parkingHandler)
 	e.Logger.Fatal(e.Start(":8000"))
 }

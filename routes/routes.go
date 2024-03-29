@@ -2,6 +2,7 @@ package routes
 
 import (
 	"parkify-BE/config"
+	"parkify-BE/features/parking"
 	user "parkify-BE/features/user"
 
 	echojwt "github.com/labstack/echo-jwt/v4"
@@ -9,8 +10,9 @@ import (
 	// "github.com/labstack/echo"
 )
 
-func InitRoute(c *echo.Echo, ct1 user.UserController) {
+func InitRoute(c *echo.Echo, ct1 user.UserController, pc parking.ParkingController) {
 	userRoute(c, ct1)
+	parkingRoute(c, pc)
 }
 
 func userRoute(c *echo.Echo, ct1 user.UserController) {
@@ -23,6 +25,12 @@ func userRoute(c *echo.Echo, ct1 user.UserController) {
 		SigningKey: []byte(config.JWTSECRET),
 	}))
 	c.DELETE("/users/:id", ct1.DeleteAccount(), echojwt.WithConfig(echojwt.Config{
+		SigningKey: []byte(config.JWTSECRET),
+	}))
+}
+
+func parkingRoute(c *echo.Echo, pc parking.ParkingController) {
+	c.POST("/parking", pc.PostParking(), echojwt.WithConfig(echojwt.Config{
 		SigningKey: []byte(config.JWTSECRET),
 	}))
 }

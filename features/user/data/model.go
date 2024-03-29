@@ -1,6 +1,10 @@
 package data
 
-import "gorm.io/gorm"
+import (
+	"parkify-BE/features/parking/data"
+
+	"gorm.io/gorm"
+)
 
 type User struct {
 	gorm.Model
@@ -8,4 +12,5 @@ type User struct {
 	Email    string `gorm:"type:varchar(30);"`
 	Role     bool
 	Password string
+	Parkings []data.Parking `gorm:"foreignKey:User_ID;references:ID"`
 }
