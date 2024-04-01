@@ -36,7 +36,7 @@ type User struct {
 	Fullname string
 	Email    string
 	Password string
-	Role     bool
+	Role     string
 }
 
 type Login struct {
@@ -45,10 +45,10 @@ type Login struct {
 }
 
 type Register struct {
-	Fullname string `validate:"required,alpha"`
+	Fullname string `validate:"required,alphaunicode"`
 	Email    string `validate:"required,email"`
 	Password string `validate:"required,alphanum,min=8"`
-	Role     bool   `validate:"required"`
+	Role     string `validate:"required"`
 }
 
 type Update struct {
