@@ -30,12 +30,22 @@ func (s *service) PostParking(token *jwt.Token, newData parking.Parking) error {
 		return errors.New("data tidak valid")
 	}
 
+	user, err := s.m.GetDataByEmail(email)
+	if err != nil {
+		log.Println("error getting user:", err)
+		return err
+	}
+	
+
+	newData.User_ID = user.ID
+
 	var parkingValidate parking.AddParkingVal
 	parkingValidate.ImageLoc = newData.ImageLoc
 	parkingValidate.Location = newData.Location
-	parkingValidate.LocationName = newData.LocationName
+	parkingValidate.City = newData.City
+	parkingValidate.User_ID = newData.User_ID
 
-	err := s.v.Struct(&parkingValidate)
+	err = s.v.Struct(&parkingValidate)
 	if err != nil {
 		log.Println("error validasi", err.Error())
 		return err

@@ -10,7 +10,7 @@ type User struct {
 	gorm.Model
 	Fullname string
 	Email    string `gorm:"type:varchar(30);"`
-	Role     bool
+	Role     string
 	Password string
-	Parkings []data.Parking `gorm:"foreignKey:User_ID;references:ID"`
+	Parking  data.Parking `gorm:"foreignKey:UserID;references:ID"`
 }

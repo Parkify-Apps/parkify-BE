@@ -2,6 +2,7 @@ package data
 
 import (
 	"parkify-BE/features/parking"
+	"parkify-BE/features/user"
 
 	"gorm.io/gorm"
 )
@@ -22,4 +23,12 @@ func (m *model) PostParking(newData parking.Parking, email string) error {
 		return err
 	}
 	return nil
+}
+
+func (m *model) GetDataByEmail(email string) (user.User, error) {
+	var result user.User
+	if err := m.connection.Where("email = ?", email).First(&result).Error; err != nil {
+		return user.User{}, err
+	}
+	return result, nil
 }

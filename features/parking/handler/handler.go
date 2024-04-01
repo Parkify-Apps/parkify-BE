@@ -52,12 +52,11 @@ func (ct *controller) PostParking() echo.HandlerFunc {
 			return err
 		}
 
-		locName := c.FormValue("locname")
+		city := c.FormValue("city")
 		location := c.FormValue("location")
 
-
 		var inputProcess parking.Parking
-		inputProcess.LocationName = locName
+		inputProcess.City = city
 		inputProcess.Location = location
 		if resp.SecureURL != "" { // add image only if URL is not empty
 			inputProcess.ImageLoc = resp.SecureURL
@@ -68,11 +67,10 @@ func (ct *controller) PostParking() echo.HandlerFunc {
 				return c.JSON(http.StatusNotFound,
 					helper.ResponseFormat(http.StatusNotFound, "data tidak ditemukan", nil))
 			}
-			// Jika terjadi kesalahan lain selain "record not found",
-			// kembalikan respons forbidden
-			log.Println("error update profile:", err.Error())
-			return c.JSON(http.StatusForbidden,
-				helper.ResponseFormat(http.StatusForbidden, "Anda tidak diizinkan mengakses halaman ini", nil))
+			if err != nil {
+				return c.JSON(http.StatusInternalServerError,
+					helper.ResponseFormat(http.StatusInternalServerError, helper.ServerGeneralError, nil))
+			}
 		}
 		return c.JSON(http.StatusOK,
 			helper.ResponseFormat(http.StatusOK, "Adding Parking Success", nil))
