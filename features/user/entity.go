@@ -45,7 +45,7 @@ type Login struct {
 }
 
 type Register struct {
-	Fullname string `validate:"required,alphaunicode"`
+	Fullname string `validate:"required,min=5"`
 	Email    string `validate:"required,email"`
 	Password string `validate:"required,alphanum,min=8"`
 	Role     string `validate:"required"`
