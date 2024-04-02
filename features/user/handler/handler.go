@@ -135,7 +135,7 @@ func (ct *controller) Profile() echo.HandlerFunc {
 		}
 
 		var response ProfileResponse
-		response.Email = result.Fullname
+		response.Fullname = result.Fullname
 		response.Email = result.Email
 
 		return c.JSON(http.StatusOK,
