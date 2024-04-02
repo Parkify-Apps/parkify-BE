@@ -18,7 +18,7 @@ func InitRoute(c *echo.Echo, ct1 user.UserController, pc parking.ParkingControll
 func userRoute(c *echo.Echo, ct1 user.UserController) {
 	c.POST("/users", ct1.Add())
 	c.POST("/login", ct1.Login())
-	c.GET("/profile/:user_id", ct1.Profile(), echojwt.WithConfig(echojwt.Config{
+	c.GET("/profile/:id", ct1.Profile(), echojwt.WithConfig(echojwt.Config{
 		SigningKey: []byte(config.JWTSECRET),
 	}))
 	c.PUT("/profile/:id", ct1.UpdateProfile(), echojwt.WithConfig(echojwt.Config{
@@ -31,6 +31,15 @@ func userRoute(c *echo.Echo, ct1 user.UserController) {
 
 func parkingRoute(c *echo.Echo, pc parking.ParkingController) {
 	c.POST("/parking", pc.PostParking(), echojwt.WithConfig(echojwt.Config{
+		SigningKey: []byte(config.JWTSECRET),
+	}))
+	c.PUT("/parking/:id", pc.UpdateParking(), echojwt.WithConfig(echojwt.Config{
+		SigningKey: []byte(config.JWTSECRET),
+	}))
+	c.GET("/parking/:id", pc.GetParking(), echojwt.WithConfig(echojwt.Config{
+		SigningKey: []byte(config.JWTSECRET),
+	}))
+	c.GET("/parking", pc.GetAllParking(), echojwt.WithConfig(echojwt.Config{
 		SigningKey: []byte(config.JWTSECRET),
 	}))
 }
