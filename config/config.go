@@ -3,9 +3,6 @@ package config
 import (
 	"fmt"
 	"os"
-  parking "parkify-BE/features/parking/data"
-	parkingslot "parkify-BE/features/parkingslot/data"
-	user "parkify-BE/features/user/data"
 
 	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
@@ -77,8 +74,10 @@ func InitSQL(c AppConfig) *gorm.DB {
 		fmt.Println("terjadi error", err.Error())
 		return nil
 	}
-  
-	db.AutoMigrate(&user.User{}, &parkingslot.ParkingSlot{}, &parking.Parking{})
 
 	return db
+}
+
+func Migrate(connection *gorm.DB, dst ...interface{}) error {
+	return connection.AutoMigrate(dst...)
 }

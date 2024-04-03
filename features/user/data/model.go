@@ -15,3 +15,4 @@ type User struct {
 	Password    string
 	Parking     parking.Parking         `gorm:"foreignKey:UserID;references:ID"`
 	ParkingSlot parkingslot.ParkingSlot `gorm:"foreignKey:Email;references:Email"`
+}
