@@ -73,7 +73,7 @@ func (s *service) Login(loginData user.User) (user.User, string, error) {
 		return user.User{}, "", errors.New(helper.UserCredentialError)
 	}
 
-	token, err := middlewares.GenerateJWT(dbData.Email)
+	token, err := middlewares.GenerateJWT(dbData.Email, dbData.Role)
 	if err != nil {
 		log.Println("error generate", err.Error())
 		return user.User{}, "", errors.New(helper.ServiceGeneralError)
