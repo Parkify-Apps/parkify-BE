@@ -20,10 +20,10 @@ func userRoute(c *echo.Echo, ct1 user.UserController) {
 	c.GET("/users", ct1.Profile(), echojwt.WithConfig(echojwt.Config{
 		SigningKey: []byte(config.JWTSECRET),
 	}))
-	c.PUT("/users/:id", ct1.UpdateProfile(), echojwt.WithConfig(echojwt.Config{
+	c.PUT("/users", ct1.UpdateProfile(), echojwt.WithConfig(echojwt.Config{
 		SigningKey: []byte(config.JWTSECRET),
 	}))
-	c.DELETE("/users/:id", ct1.DeleteAccount(), echojwt.WithConfig(echojwt.Config{
+	c.DELETE("/users", ct1.DeleteAccount(), echojwt.WithConfig(echojwt.Config{
 		SigningKey: []byte(config.JWTSECRET),
 	}))
 }

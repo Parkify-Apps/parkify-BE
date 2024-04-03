@@ -18,17 +18,16 @@ type UserService interface {
 	Register(newData User) error
 	Login(loginData User) (User, string, error)
 	Profile(token *jwt.Token) (User, error)
-	UpdateProfile(userID int, token *jwt.Token, newData User) error
-	DeleteAccount(userID uint, token *jwt.Token) error
+	UpdateProfile(token *jwt.Token, newData User) error
+	DeleteAccount(token *jwt.Token) error
 }
 
 type UserModel interface {
 	AddUser(newData User) error
 	Login(email string) (User, error)
 	Profile(email string) (User, error)
-	UpdateProfile(userID int, email string, data User) error
-	GetUserByID(userID uint) (User, error)
-	Delete(userID uint, email string) error
+	UpdateProfile(email string, data User) error
+	Delete(email string) error
 }
 
 type User struct {
