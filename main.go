@@ -2,6 +2,9 @@ package main
 
 import (
 	"parkify-BE/config"
+	parking_slot_data "parkify-BE/features/parkingslot/data"
+	parking_slot_handler "parkify-BE/features/parkingslot/handler"
+	parking_slot_services "parkify-BE/features/parkingslot/services"
 	"parkify-BE/features/user/data"
 	"parkify-BE/features/user/handler"
 	"parkify-BE/features/user/services"
@@ -20,9 +23,13 @@ func main() {
 	userService := services.NewService(userData)
 	userHandler := handler.NewUserHandler(userService)
 
+	parkingSlotData := parking_slot_data.New(db)
+	parkingSlotService := parking_slot_services.ParkingSlotService(parkingSlotData)
+	parkingSlotHandler := parking_slot_handler.NewHandler(parkingSlotService)
+
 	e.Pre(middleware.RemoveTrailingSlash())
 	e.Use(middleware.Logger())
 	e.Use(middleware.CORS())
-	routes.InitRoute(e, userHandler)
+	routes.InitRoute(e, userHandler, parkingSlotHandler)
 	e.Logger.Fatal(e.Start(":8000"))
 }
