@@ -4,7 +4,6 @@ import (
 	"errors"
 	user "parkify-BE/features/user"
 	"parkify-BE/helper"
-	"strconv"
 
 	"log"
 	"net/http"
@@ -115,9 +114,14 @@ func (ct *controller) Profile() echo.HandlerFunc {
 	return func(c echo.Context) error {
 
 		token, ok := c.Get("user").(*jwt.Token)
+		defer func() {
+			if err := recover(); err != nil {
+				log.Println("error jwt creation:", err)
+
+			}
+		}()
 		if !ok {
-			return c.JSON(http.StatusBadRequest,
-				helper.ResponseFormat(http.StatusBadRequest, helper.UserInputError, nil))
+			return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, helper.UserInputError, nil))
 		}
 
 		result, err := ct.service.Profile(token)
@@ -145,20 +149,19 @@ func (ct *controller) Profile() echo.HandlerFunc {
 
 func (ct *controller) UpdateProfile() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		userID, err := strconv.ParseUint(c.Param("id"), 10, 32)
-		if err != nil {
-			return c.JSON(http.StatusBadRequest,
-				helper.ResponseFormat(http.StatusBadRequest, helper.UserInputError, nil))
-		}
-
 		token, ok := c.Get("user").(*jwt.Token)
+		defer func() {
+			if err := recover(); err != nil {
+				log.Println("error jwt creation:", err)
+
+			}
+		}()
 		if !ok {
-			return c.JSON(http.StatusBadRequest,
-				helper.ResponseFormat(http.StatusBadRequest, helper.UserInputError, nil))
+			return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, helper.UserInputError, nil))
 		}
 
 		var input user.User
-		err = c.Bind(&input)
+		err := c.Bind(&input)
 		if err != nil {
 			log.Println("error bind data:", err.Error())
 			if strings.Contains(err.Error(), "unsupport") {
@@ -169,7 +172,7 @@ func (ct *controller) UpdateProfile() echo.HandlerFunc {
 				helper.ResponseFormat(http.StatusBadRequest, helper.UserInputError, nil))
 		}
 
-		err = ct.service.UpdateProfile(int(userID), token, input)
+		err = ct.service.UpdateProfile(token, input)
 		if err != nil {
 			log.Println("error update profile not found:", err.Error())
 			if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -191,21 +194,18 @@ func (ct *controller) UpdateProfile() echo.HandlerFunc {
 
 func (ct *controller) DeleteAccount() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		userID, err := strconv.ParseUint(c.Param("id"), 10, 32)
-		if err != nil {
-			log.Println("error param:", err.Error())
-			return c.JSON(http.StatusBadRequest,
-				helper.ResponseFormat(http.StatusBadRequest, helper.UserInputError, nil))
-		}
-
 		token, ok := c.Get("user").(*jwt.Token)
+		defer func() {
+			if err := recover(); err != nil {
+				log.Println("error jwt creation:", err)
+
+			}
+		}()
 		if !ok {
-			log.Println("error token:", err.Error())
-			return c.JSON(http.StatusBadRequest,
-				helper.ResponseFormat(http.StatusBadRequest, helper.UserInputError, nil))
+			return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, helper.UserInputError, nil))
 		}
 
-		err = ct.service.DeleteAccount(uint(userID), token)
+		err := ct.service.DeleteAccount(token)
 		if err != nil {
 			log.Println("error deleting account:", err.Error())
 			if errors.Is(err, gorm.ErrRecordNotFound) {

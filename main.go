@@ -38,5 +38,6 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.CORS())
 	routes.InitRoute(e, userHandler, parkingHandler, parkingSlotHandler)
+  
 	e.Logger.Fatal(e.Start(":8000"))
 }

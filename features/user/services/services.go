@@ -101,26 +101,14 @@ func (s *service) Profile(token *jwt.Token) (user.User, error) {
 	return result, nil
 }
 
-func (s *service) UpdateProfile(userID int, token *jwt.Token, newData user.User) error {
+func (s *service) UpdateProfile(token *jwt.Token, newData user.User) error {
 	email := middlewares.DecodeToken(token)
 	if email == "" {
 		log.Println("error decode token:", "token tidak ditemukan")
 		return errors.New("data tidak valid")
 	}
 
-	u, error := s.model.GetUserByID(uint(userID))
-	if error != nil {
-		log.Println("error getting user:", error.Error())
-		return error
-	}
-
-	if u.Email != email {
-		log.Println("error get account:", "user tidak sesuai")
-		return errors.New("user tidak sesuai")
-	}
-
 	var validate user.Update
-	validate.Email = newData.Email
 	validate.Fullname = newData.Fullname
 	validate.Password = newData.Password
 	err := s.v.Struct(&validate)
@@ -137,7 +125,7 @@ func (s *service) UpdateProfile(userID int, token *jwt.Token, newData user.User)
 		newData.Password = newPassword
 	}
 
-	err = s.model.UpdateProfile(userID, email, newData)
+	err = s.model.UpdateProfile(email, newData)
 	if err != nil {
 		log.Print("error update to model: ", err.Error())
 		return errors.New(helper.ServerGeneralError)
@@ -146,25 +134,14 @@ func (s *service) UpdateProfile(userID int, token *jwt.Token, newData user.User)
 	return nil
 }
 
-func (s *service) DeleteAccount(userID uint, token *jwt.Token) error {
+func (s *service) DeleteAccount(token *jwt.Token) error {
 	email := middlewares.DecodeToken(token)
 	if email == "" {
 		log.Println("error decode token:", "token tidak ditemukan")
 		return errors.New("data tidak valid")
 	}
 
-	user, err := s.model.GetUserByID(userID)
-	if err != nil {
-		log.Println("error getting user:", err.Error())
-		return err
-	}
-
-	if user.Email != email {
-		log.Println("error deleting account:", "user tidak sesuai")
-		return errors.New("user tidak sesuai")
-	}
-
-	error := s.model.Delete(userID, email)
+	error := s.model.Delete(email)
 	if error != nil {
 		log.Print("error delete to model: ", error.Error())
 		return errors.New(helper.ServerGeneralError)

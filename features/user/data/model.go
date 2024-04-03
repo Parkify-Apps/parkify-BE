@@ -10,9 +10,8 @@ import (
 type User struct {
 	gorm.Model
 	Fullname    string
-	Email       string `gorm:"type:varchar(30);Unique"`
+	Email       string `gorm:"type:varchar(30);unique"`
 	Role        string
 	Password    string
 	Parking     parking.Parking         `gorm:"foreignKey:UserID;references:ID"`
 	ParkingSlot parkingslot.ParkingSlot `gorm:"foreignKey:Email;references:Email"`
-}

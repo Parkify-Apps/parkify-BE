@@ -3,7 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
-	parking "parkify-BE/features/parking/data"
+  parking "parkify-BE/features/parking/data"
 	parkingslot "parkify-BE/features/parkingslot/data"
 	user "parkify-BE/features/user/data"
 
@@ -77,7 +77,7 @@ func InitSQL(c AppConfig) *gorm.DB {
 		fmt.Println("terjadi error", err.Error())
 		return nil
 	}
-
+  
 	db.AutoMigrate(&user.User{}, &parkingslot.ParkingSlot{}, &parking.Parking{})
 
 	return db
