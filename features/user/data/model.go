@@ -1,7 +1,8 @@
 package data
 
 import (
-	"parkify-BE/features/parkingslot"
+	parking "parkify-BE/features/parking/data"
+	parkingslot "parkify-BE/features/parkingslot/data"
 
 	"gorm.io/gorm"
 )
@@ -12,5 +13,5 @@ type User struct {
 	Email       string `gorm:"type:varchar(30);unique"`
 	Role        string
 	Password    string
-	ParkingSlot []parkingslot.ParkingSlot `gorm:"foreignKey:Email;references:Email"`
-}
+	Parking     parking.Parking         `gorm:"foreignKey:UserID;references:ID"`
+	ParkingSlot parkingslot.ParkingSlot `gorm:"foreignKey:Email;references:Email"`
