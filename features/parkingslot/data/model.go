@@ -4,7 +4,7 @@ import "gorm.io/gorm"
 
 type ParkingSlot struct {
 	gorm.Model
-	Email       string
+	Email       string `gorm:"type:varchar(30)"`
 	ParkingID   uint
 	VehicleType string
 	Floor       int
