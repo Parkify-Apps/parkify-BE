@@ -1,6 +1,7 @@
 package parking
 
 import (
+	"parkify-BE/features/parkingslot"
 	"parkify-BE/features/user"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -32,11 +33,11 @@ type ParkingModel interface {
 }
 
 type Parking struct {
-	ImageLoc string `json:"imageloc" form:"imageloc"`
-	Location string `json:"location" form:"location"`
-	City     string `json:"city" form:"city"`
-	User_ID  uint   `json:"user_id" form:"user_id"`
-	// ParkingSlot []data.ParkingSlot
+	ImageLoc     string                    `json:"imageloc" form:"imageloc"`
+	Location     string                    `json:"location" form:"location"`
+	City         string                    `json:"city" form:"city"`
+	User_ID      uint                      `json:"user_id" form:"user_id"`
+	ParkingSlots []parkingslot.ParkingSlot `json:"parking_slots"`
 }
 
 type AddParkingVal struct {

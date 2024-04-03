@@ -3,9 +3,9 @@ package config
 import (
 	"fmt"
 	"os"
-	user "parkify-BE/features/user/data"
 	parking "parkify-BE/features/parking/data"
-	
+	parkingslot "parkify-BE/features/parkingslot/data"
+	user "parkify-BE/features/user/data"
 
 	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
@@ -78,7 +78,7 @@ func InitSQL(c AppConfig) *gorm.DB {
 		return nil
 	}
 
-	db.AutoMigrate(&user.User{}, &parking.Parking{})
+	db.AutoMigrate(&user.User{}, &parkingslot.ParkingSlot{}, &parking.Parking{})
 
 	return db
 }

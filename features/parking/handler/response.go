@@ -1,10 +1,12 @@
 package handler
 
-// import "parkify-BE/features/parkingSlot/data"
+import (
+	"parkify-BE/features/parkingslot"
+)
 
 type ParkingResponse struct {
-	Location    string
-	City        string
-	ImageLoc    string
-	// ParkingSlot []data.ParkingSlot
+	Location     string                    `json:"location"`
+	City         string                    `json:"city"`
+	ImageLoc     string                    `json:"image_loc"`
+	ParkingSlots []parkingslot.ParkingSlot `json:"parking_slots"`
 }

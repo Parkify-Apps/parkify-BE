@@ -209,7 +209,7 @@ func (ct *controller) GetParking() echo.HandlerFunc {
 		response.Location = result.Location
 		response.City = result.City
 		response.ImageLoc = result.ImageLoc
-		// response.ParkingSlot = result.ParkingSlot
+		response.ParkingSlots = result.ParkingSlots
 
 		return c.JSON(http.StatusOK,
 			helper.ResponseFormat(http.StatusOK, "berhasil mendapatkan data", response))
