@@ -218,8 +218,9 @@ func (ct *controller) GetParking() echo.HandlerFunc {
 
 func (ct *controller) GetAllParking() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		var parkingID, err = strconv.Atoi(c.QueryParam("id"))
-		result, err := ct.s.GetAllParking(parkingID)
+		var userID, err = strconv.Atoi(c.QueryParam("userid"))
+
+		result, err := ct.s.GetAllParking(uint(userID))
 		if err != nil {
 			if strings.Contains(err.Error(), "validation") || strings.Contains(err.Error(), "cek kembali") {
 				return c.JSON(http.StatusInternalServerError,

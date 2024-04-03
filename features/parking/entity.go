@@ -17,10 +17,9 @@ type ParkingController interface {
 type ParkingServices interface {
 	PostParking(token *jwt.Token, newData Parking) error
 	UpdateParking(parkingID int, token *jwt.Token, newData Parking) error
-
 	GetPicture(parkingID int) (Parking, error)
 	GetParking(token *jwt.Token, parkingID uint) (Parking, error)
-	GetAllParking(parkingID int) ([]Parking, error)
+	GetAllParking(userID uint) ([]Parking, error)
 }
 
 type ParkingModel interface {
@@ -29,7 +28,7 @@ type ParkingModel interface {
 	GetDataParkingByID(parkingID uint) (Parking, error)
 	Update(parkingID int, updateFields map[string]interface{}, userID uint) error
 	GetPicture(parkingID int) (Parking, error)
-	GetAllParking(parkingID int) ([]Parking, error)
+	GetAllParking(userID uint) ([]Parking, error)
 }
 
 type Parking struct {

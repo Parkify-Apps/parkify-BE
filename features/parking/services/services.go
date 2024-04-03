@@ -146,8 +146,8 @@ func (s *service) GetParking(token *jwt.Token, parkingID uint) (parking.Parking,
 	return result, nil
 }
 
-func (s *service) GetAllParking(parkingID int) ([]parking.Parking, error) {
-	result, err := s.m.GetAllParking(parkingID)
+func (s *service) GetAllParking(userID uint) ([]parking.Parking, error) {
+	result, err := s.m.GetAllParking(userID)
 	if err != nil {
 		return nil, err
 	}

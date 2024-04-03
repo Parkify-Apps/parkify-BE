@@ -64,10 +64,18 @@ func (m *model) GetPicture(parkingID int) (parking.Parking, error) {
 	return result, nil
 }
 
-func (m *model) GetAllParking(parkingID int) ([]parking.Parking, error) {
+func (m *model) GetAllParking(userID uint) ([]parking.Parking, error) {
 	var result []parking.Parking
-	if err := m.connection.Where("id = ?", parkingID).Error; err != nil {
-		return nil, err
+
+	if userID == 0 {
+		err := m.connection.Find(&result).Error
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		if err := m.connection.Where("user_id = ?", userID).Find(&result).Error; err != nil {
+			return nil, err
+		}
 	}
 	return result, nil
 }
