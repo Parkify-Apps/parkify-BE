@@ -1,7 +1,7 @@
 package data
 
 import (
-	"parkify-BE/features/parkingSlot/data"
+	"parkify-BE/features/parkingslot/data"
 
 	"gorm.io/gorm"
 )
