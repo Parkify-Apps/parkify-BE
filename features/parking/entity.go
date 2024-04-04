@@ -1,11 +1,13 @@
 package parking
 
 import (
+	// "parkify-BE/features/parkingslot"
 	"parkify-BE/features/parkingslot"
 	"parkify-BE/features/user"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
+	"gorm.io/gorm"
 )
 
 type ParkingController interface {
@@ -21,6 +23,7 @@ type ParkingServices interface {
 	GetPicture(parkingID int) (Parking, error)
 	GetParking(token *jwt.Token, parkingID uint) (Parking, error)
 	GetAllParking(userID uint) ([]Parking, error)
+	GetAllSlotByID(parkingID uint) ([]parkingslot.ParkingSlot, error)
 }
 
 type ParkingModel interface {
@@ -30,15 +33,26 @@ type ParkingModel interface {
 	Update(parkingID int, updateFields map[string]interface{}, userID uint) error
 	GetPicture(parkingID int) (Parking, error)
 	GetAllParking(userID uint) ([]Parking, error)
+	GetAllSlotByID(parkingID uint) ([]parkingslot.ParkingSlot, error)
 }
 
 type Parking struct {
+	gorm.Model
 	ImageLoc     string                    `json:"imageloc" form:"imageloc"`
 	Location     string                    `json:"location" form:"location"`
 	City         string                    `json:"city" form:"city"`
-	User_ID      uint                      `json:"user_id" form:"user_id"`
-	ParkingSlots []parkingslot.ParkingSlot `json:"parking_slots"`
+	UserID      uint                      `json:"user_id" form:"user_id"`
+	
 }
+type GetParking struct {
+	gorm.Model
+	ImageLoc     string                    `json:"imageloc" form:"imageloc"`
+	Location     string                    `json:"location" form:"location"`
+	City         string                    `json:"city" form:"city"`
+	UserID      uint                      `json:"user_id" form:"user_id"`
+	// ParkingSlots []parkingslot.ParkingSlot `json:"parking_slots"`
+}
+
 
 type AddParkingVal struct {
 	ImageLoc string `validate:"required" form:"imageloc"`

@@ -205,11 +205,18 @@ func (ct *controller) GetParking() echo.HandlerFunc {
 				helper.ResponseFormat(http.StatusForbidden, "Anda tidak diizinkan mengakses profil pengguna lain", nil))
 		}
 
+		res, err := ct.s.GetAllSlotByID(uint(parkingID))
+		if err != nil {
+			log.Println("error get all slot:", err.Error())
+			return c.JSON(http.StatusBadRequest,
+				helper.ResponseFormat(http.StatusBadRequest, helper.UserInputError, nil))
+		}
+
 		var response ParkingResponse
 		response.Location = result.Location
 		response.City = result.City
 		response.ImageLoc = result.ImageLoc
-		response.ParkingSlots = result.ParkingSlots
+		response.ParkingSlots = res
 
 		return c.JSON(http.StatusOK,
 			helper.ResponseFormat(http.StatusOK, "berhasil mendapatkan data", response))

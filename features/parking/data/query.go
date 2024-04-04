@@ -4,6 +4,7 @@ import (
 	"errors"
 	"log"
 	"parkify-BE/features/parking"
+	"parkify-BE/features/parkingslot"
 	"parkify-BE/features/user"
 
 	"gorm.io/gorm"
@@ -76,6 +77,14 @@ func (m *model) GetAllParking(userID uint) ([]parking.Parking, error) {
 		if err := m.connection.Where("user_id = ?", userID).Find(&result).Error; err != nil {
 			return nil, err
 		}
+	}
+	return result, nil
+}
+
+func (m *model) GetAllSlotByID(parkingID uint) ([]parkingslot.ParkingSlot, error) {
+	var result []parkingslot.ParkingSlot
+	if err := m.connection.Where("parking_id = ?", parkingID).Find(&result).Error; err != nil {
+		return nil, err
 	}
 	return result, nil
 }

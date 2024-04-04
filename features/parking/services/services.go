@@ -4,6 +4,7 @@ import (
 	"errors"
 	"log"
 	"parkify-BE/features/parking"
+	"parkify-BE/features/parkingslot"
 	"parkify-BE/helper"
 	"parkify-BE/middlewares"
 
@@ -36,13 +37,13 @@ func (s *service) PostParking(token *jwt.Token, newData parking.Parking) error {
 		return err
 	}
 
-	newData.User_ID = user.ID
+	newData.UserID = user.ID
 
 	var parkingValidate parking.AddParkingVal
 	parkingValidate.ImageLoc = newData.ImageLoc
 	parkingValidate.Location = newData.Location
 	parkingValidate.City = newData.City
-	parkingValidate.User_ID = newData.User_ID
+	parkingValidate.User_ID = newData.UserID
 
 	err = s.v.Struct(&parkingValidate)
 	if err != nil {
@@ -78,7 +79,7 @@ func (s *service) UpdateParking(parkingID int, token *jwt.Token, newData parking
 		return error
 	}
 
-	if u.ID != user.User_ID {
+	if u.ID != user.UserID {
 		log.Println("error get account:", "user tidak sesuai")
 		return errors.New("user tidak sesuai")
 	}
@@ -102,7 +103,7 @@ func (s *service) UpdateParking(parkingID int, token *jwt.Token, newData parking
 		updateFields["image_loc"] = newData.ImageLoc
 	}
 
-	err = s.m.Update(parkingID, updateFields, user.User_ID)
+	err = s.m.Update(parkingID, updateFields, user.UserID)
 	if err != nil {
 		log.Print("error update to model: ", err.Error())
 		return errors.New(helper.ServerGeneralError)
@@ -139,7 +140,7 @@ func (s *service) GetParking(token *jwt.Token, parkingID uint) (parking.Parking,
 		return parking.Parking{}, err
 	}
 
-	if u.ID != result.User_ID {
+	if u.ID != result.UserID {
 		return parking.Parking{}, errors.New("anda tidak diizinkan mengakses profil pengguna lainn")
 	}
 
@@ -148,6 +149,15 @@ func (s *service) GetParking(token *jwt.Token, parkingID uint) (parking.Parking,
 
 func (s *service) GetAllParking(userID uint) ([]parking.Parking, error) {
 	result, err := s.m.GetAllParking(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
+func (s *service) GetAllSlotByID(parkingID uint) ([]parkingslot.ParkingSlot, error) {
+	result, err := s.m.GetAllSlotByID(parkingID)
 	if err != nil {
 		return nil, err
 	}
