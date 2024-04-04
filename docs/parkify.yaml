@@ -1,0 +1,634 @@
+openapi: 3.0.0
+info:
+  description: |
+    Parkify Open API
+  version: "1.0.0"
+  title: Parkify
+  termsOfService: 'http://swagger.io/terms/'
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/RAICHUGO25/Parkify-Apps/1.0.0
+  - description: Server Deploy
+    url: https://parkify.online
+tags:
+  - name: user
+    description: Organize Data User
+  - name: parking
+    description: Organize Data Parking
+  - name: parkingslot
+    description: Organize Data Parking Slot
+  - name: transaction
+    description: Organize Data Transaction
+  - name: reservation
+    description: Organize Booking
+paths:
+  /users:
+    post:
+      tags:
+        - user
+      summary: Add a New User
+      description: Registering New User. Fullname Minimal Character = 5, Password Minimal Character = 8
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - fullname
+                - role
+                - email
+                - password
+              properties:
+                fullname:
+                  type: string
+                role:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+            example:
+              fullname: "Muhamad Khomsin Ariseno"
+              role: "operator"
+              email: "khomsin.ariseno@gmail.com"
+              password: "pass1234"
+      responses:
+        '201':
+          description: New User Added Successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+              example:
+                code: 201
+                message: "selamat data anda sudah terdaftar"
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+    get:
+      tags:
+        - user
+      security:
+        - bearerAuth: []
+      summary: See Your Profile
+      description: See Your Profile Using Token
+      responses:
+        '200':
+          description: "Successfully Get MyProfile"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiDataResponse'
+              example: 
+                code: 200
+                data:
+                  fullname: "Muhamad Khomsin Ariseno"
+                  email: "khomsin.ariseno@gmail.com"
+                message: "Successfully Get MyProfile"
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+    delete:
+      tags:
+        - user
+      security:
+        - bearerAuth: []
+      summary: Delete User
+      responses:
+        '200':
+          description: "Successfully Delete User"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+              example:
+                code: 200
+                message: "Successfully Delete User"
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      tags: 
+        - user
+      security:
+        - bearerAuth: []
+      summary: Update Profile User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - fullname
+                - password
+              properties:
+                fullname:
+                  type: string
+                password:
+                  type: string
+            example:
+              fullname: "Khomsin Ariseno"
+              password: "password123"
+      responses:
+        '200':
+          description: "Successfully Update User"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+              example:
+                code: 200
+                message: "Successfully Update User"
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+  /login:
+    post:
+      tags:
+        - user
+      summary: Login Using email and Password
+      description: Input Your email and Password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+            example:
+              email: "khomsin.ariseno@gmail.com"
+              password: "pass1234"
+      responses:
+        '200':
+          description: "Login Successfully"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiDataResponse'
+              example: 
+                code: 200
+                data:
+                  fullname: "Muhamad Khomsin Ariseno"
+                  email: "khomsin.ariseno@gmail.com"
+                  token: "abogoboga_12sfqQSF008@yuhuu"
+                message: "Login Successfully"
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+  /parking:
+    post:
+      tags: 
+        - parking
+      security:
+        - bearerAuth: []
+      summary: Add a New Parking
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                location:
+                  type: string
+                city:
+                  type: string
+                imageloc:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: "Parking Added Successfully"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+              example: 
+                code: 201
+                message: "Parking Added Successfully"
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+    get:
+      tags: 
+        - parking
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          description: parking_id yang ingin ditampilkan
+      security:
+        - bearerAuth: []
+      summary: Get All Parking Location
+      responses:
+        '200':
+          description: "Successfully Get All Parking"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiDataArrayResponse'
+              example: 
+                code: 200
+                data:
+                  - location: "Kokas"
+                    city: "Jakarta"
+                    imageloc: "urlimage1.jpg"
+                  - location: "Gallery Indonesia"
+                    city: "Jakarta"
+                    imageloc: "urlimage2.jpg"
+                  - location: "Pasific Place"
+                    city: "Jakarta"
+                    imageloc: "urlimage3.jpg"
+                message: "Successfully Get All Parking"
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+  /parking/{parkingID}:
+    get:
+      tags: 
+        - parking
+      parameters:
+        - name: parkingID
+          in: path
+          description: ID parking yang ingin di tampilkan
+          required: true
+          schema:
+            type: string
+          example: 1
+      security:
+        - bearerAuth: []
+      summary: Get My Parking
+      responses:
+        '200':
+          description: "Successfully Get My Parking"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiDataResponse'
+              example: 
+                code: 200
+                data:
+                  location: "Kokas"
+                  city: "Jakarta"
+                  imageloc: "urlimage1.jpg"
+                  slot:
+                  - vehicle_type: "Motorcycle"
+                    floor: 2
+                    slot: 5
+                    price: 5000
+                    status: "available"
+                  - vehicle_type: "Car"
+                    floor: 2
+                    slot: 10
+                    price: 10000
+                    status: "not available"
+                message: "Successfully Get All Parking"
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      tags: 
+        - parking
+      parameters:
+        - name: parkingID
+          in: path
+          description: ID parking yang ingin di edit
+          required: true
+          schema:
+            type: string
+          example: 1
+      security:
+        - bearerAuth: []
+      summary: Edit Parking
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                location:
+                  type: string
+                city:
+                  type: string
+                imageloc:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: "Parking Edited Successfully"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+              example: 
+                code: 201
+                message: "Parking Edited Successfully"
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+  /parkingslot:
+    post:
+      tags: 
+        - parkingslot
+      security:
+        - bearerAuth: []
+      summary: Add a New Parking Slot
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                parking_id:
+                  type: integer
+                vehicle_type:
+                  type: string
+                floor:
+                  type: integer
+                slot:
+                  type: integer
+                price:
+                  type: integer
+            example:
+              parking_id: 1
+              vehicle_type: "Motorcycle"
+              floor: 1
+              slot: 5
+              price: 10000
+      responses:
+        '201':
+          description: "Parking Slot Added Successfully"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+              example: 
+                code: 201
+                message: "Success Add Parking Slot"
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+    get:
+      tags: 
+        - parkingslot
+      security:
+        - bearerAuth: []
+      summary: Get All Parking Slot
+      responses:
+        '200':
+          description: "Successfully Get All Parking Slot"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiDataArrayResponse'
+              example: 
+                code: 200
+                data:
+                  - vehicle_type: "Motorcycle"
+                    floor: 1
+                    slot: 5
+                    price: 5000
+                    status: "available"
+                  - vehicle_type: "Car"
+                    floor: 2
+                    slot: 10
+                    price: 10000
+                    status: "not available"
+                message: "Success Get All Parking Slot"
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+  /parkingslot/{parkingslotID}:
+    put:
+      tags: 
+        - parkingslot
+      parameters:
+        - name: parkingslotID
+          in: path
+          description: ID parking slot yang ingin di edit
+          required: true
+          schema:
+            type: string
+          example: 1
+      security:
+        - bearerAuth: []
+      summary: Edit Parking Slot
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                price:
+                  type: integer
+            example:
+              price: 10000
+      responses:
+        '200':
+          description: "Parking Slot Edited Successfully"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+              example: 
+                code: 200
+                message: "Success Edit Parking Slot"
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+    delete:
+      tags: 
+        - parkingslot
+      parameters:
+        - name: parkingslotID
+          in: path
+          description: ID parking slot yang ingin di hapus
+          required: true
+          schema:
+            type: string
+          example: 1
+      security:
+        - bearerAuth: []
+      summary: Delete Parking Slot
+      responses:
+        '200':
+          description: "Parking Slot Successfully Deleted"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+              example: 
+                code: 200
+                message: "Success Delete Parking Slot"
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+  /reservation:
+    post:
+      tags: 
+        - reservation
+      security:
+        - bearerAuth: []
+      summary: Reservation Parking Slot
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                parking_id:
+                  type: integer
+                vehicle_type:
+                  type: string
+                floor:
+                  type: integer
+                slot:
+                  type: integer
+            example: 
+              parking_id: 1
+              vehicle_type: "car"
+              floor: 1
+              slot: 1
+      responses:
+        '201':
+          description: "Reservation Successful"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+              example: 
+                code: 201
+                message: "Success Reservation"
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+    get:
+      tags: 
+        - reservation
+      security:
+        - bearerAuth: []
+      summary: Get Reservation Info
+      responses:
+        '200':
+          description: "Successfully Get Reservation Info"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiDataResponse'
+              example: 
+                code: 200
+                data:
+                  reservation_id: 4911dad1-eaea-43c3-945e-cd6e488af240
+                  parking_id: 1
+                  vehicle_type: "car"
+                  floor: 1
+                  slot: 1
+                message: "Success Get All Parking Slot"
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+components:
+  schemas:
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    ApiDataResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        data:
+          type: object
+        message:
+          type: string
+    ApiDataArrayResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int8
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            type: object
+  responses:
+    '201':
+      description: "success registered"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiResponse'
+          example: 
+            code: 201
+            message: "Congratulations, the data has been registered"
+    '400':
+      description: "Bad Required"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiResponse'
+          example: 
+            code: 400
+            message: "the data sent is incorrect"
+    '401':
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "invalid or expired jwt"
+    '500':
+      description: "server error"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiResponse'
+          example:
+            code: 500
+            message: "an error occurred in the server process"
+  securitySchemes:
+    bearerAuth:            
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
