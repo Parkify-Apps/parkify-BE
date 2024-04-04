@@ -490,6 +490,46 @@ paths:
           $ref: '#/components/responses/400'
         '500':
           $ref: '#/components/responses/500'
+  /transaction:
+    post:
+      tags: 
+        - transaction
+      security: 
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reservation_id:
+                  type: integer
+                price:
+                  type: integer
+                payment:
+                  type: string
+            example:
+              reservation_id: 1
+              price: 10000
+              payment: "VA BCA"
+      responses:
+        '201':
+          description: "Transaction Successful"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiDataResponse'
+              example: 
+                code: 201
+                data:
+                  va_number: "59210833923"
+                  status_message: "Success, Bank Transfer transaction is created"
+                message: "Transaction Success"
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
   /reservation:
     post:
       tags: 
@@ -504,19 +544,10 @@ paths:
             schema:
               type: object
               properties:
-                parking_id:
+                parkingslot_id:
                   type: integer
-                vehicle_type:
-                  type: string
-                floor:
-                  type: integer
-                slot:
-                  type: integer
-            example: 
-              parking_id: 1
-              vehicle_type: "car"
-              floor: 1
-              slot: 1
+            example:
+              parkingslot_id: 1
       responses:
         '201':
           description: "Reservation Successful"
@@ -536,7 +567,58 @@ paths:
         - reservation
       security:
         - bearerAuth: []
-      summary: Get Reservation Info
+      summary: Get Reservation History
+      responses:
+        '200':
+          description: "Successfully Get Reservation History"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiDataArrayResponse'
+              example: 
+                code: 200
+                data:
+                  - reservation_id: 1
+                    parking_id: 1
+                    parkingslot_id: 1
+                    vehicle_type: "car"
+                    floor: 1
+                    slot: 1
+                    price: 10000
+                  - reservation_id: 2
+                    parking_id: 1
+                    parkingslot_id: 2
+                    vehicle_type: "car"
+                    floor: 1
+                    slot: 2
+                    price: 10000
+                  - reservation_id: 3
+                    parking_id: 1
+                    parkingslot_id: 3
+                    vehicle_type: "motorcycle"
+                    floor: 2
+                    slot: 3
+                    price: 5000
+                message: "Success Get All Reservation Info"
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+  /reservation/{reservationID}:
+    get:
+      tags: 
+        - reservation
+      parameters:
+        - name: reservationID
+          in: path
+          description: ID reservation yang ingin di lihat
+          required: true
+          schema:
+            type: string
+          example: 1
+      security:
+        - bearerAuth: []
+      summary: Get Get Entry QR Code / Reservation Info
       responses:
         '200':
           description: "Successfully Get Reservation Info"
@@ -547,12 +629,43 @@ paths:
               example: 
                 code: 200
                 data:
-                  reservation_id: 4911dad1-eaea-43c3-945e-cd6e488af240
+                  reservation_id: 1
                   parking_id: 1
+                  parkingslot_id: 1
                   vehicle_type: "car"
                   floor: 1
                   slot: 1
-                message: "Success Get All Parking Slot"
+                  price: 10000
+                message: "Success Get All Reservation Info"
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+  /checkout:
+    get:
+      tags: 
+        - reservation
+      security:
+        - bearerAuth: []
+      summary: Get checkout Info
+      responses:
+        '200':
+          description: "Successfully Get Checkout Info"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiDataResponse'
+              example: 
+                code: 200
+                data:
+                  reservation_id: 1
+                  parking_id: 1
+                  parkingslot_id: 1
+                  vehicle_type: "car"
+                  floor: 1
+                  slot: 1
+                  price: 10000
+                message: "Success Get Checkout Info"
         '400':
           $ref: '#/components/responses/400'
         '500':
