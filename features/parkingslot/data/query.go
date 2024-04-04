@@ -51,10 +51,10 @@ func (psm *model) AllParkingSlot(email string) ([]parkingslot.ParkingSlot, error
 	return AllSlot, err
 }
 
-func (psm *model) Edit(email string, parkingSlotID string, editSlot parkingslot.ParkingSlot) error {
+func (psm *model) Edit(parkingSlotID string, editSlot parkingslot.ParkingSlot) error {
 	slotID, _ := strconv.ParseUint(parkingSlotID, 10, 64)
 
-	qry := psm.connection.Model(&ParkingSlot{}).Where("email = ? AND id = ?", email, slotID).Updates(&editSlot)
+	qry := psm.connection.Model(&ParkingSlot{}).Where("id = ?", slotID).Updates(&editSlot)
 	if err := qry.Error; err != nil {
 		return err
 	}

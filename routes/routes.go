@@ -37,7 +37,7 @@ func parkingSlotRoute(c *echo.Echo, psc parkingslot.ParkingSlotController) {
 	c.GET("/parkingslot", psc.AllParkingSlot(), echojwt.WithConfig(echojwt.Config{
 		SigningKey: []byte(config.JWTSECRET),
 	}))
-	c.PUT("/parkingslot/:parkingSlotID", psc.Edit(), echojwt.WithConfig(echojwt.Config{
+	c.PUT("/parkingslot/:id", psc.Edit(), echojwt.WithConfig(echojwt.Config{
 		SigningKey: []byte(config.JWTSECRET),
 	}))
 	c.DELETE("/parkingslot/:parkingSlotID", psc.Delete(), echojwt.WithConfig(echojwt.Config{

@@ -15,7 +15,7 @@ type ParkingSlotController interface {
 type ParkingSlotModel interface {
 	Add(email string, newSlot ParkingSlot) error
 	AllParkingSlot(email string) ([]ParkingSlot, error)
-	Edit(email string, parkingSlotID string, editSlot ParkingSlot) error
+	Edit(parkingSlotID string, editSlot ParkingSlot) error
 	Delete(email string, parkingSlotID string) error
 }
 

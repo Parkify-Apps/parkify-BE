@@ -73,7 +73,13 @@ func (s *services) Edit(token *jwt.Token, parkingSlotID string, editSlot parking
 		return errors.New("user tidak bisa mengakses fitur ini")
 
 	} else if decodeRole == "operator" {
-		err := s.m.Edit(decodeEmail, parkingSlotID, editSlot)
+		log.Print(decodeRole)
+		err := s.v.Struct(&editSlot)
+		if err != nil {
+			log.Println("error validasi", err.Error())
+			return err
+		}
+		err = s.m.Edit(parkingSlotID, editSlot)
 		if err != nil {
 			return errors.New(helper.ServerGeneralError)
 		}

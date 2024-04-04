@@ -110,9 +110,12 @@ func (ct *controller) Edit() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, helper.UserInputError, nil))
 		}
 
-		parkingslotID := c.Param("parkingslotID")
+		parkingslotID := c.Param("id")
 
-		err = ct.s.Edit(token, parkingslotID, input)
+		var updateProcess parkingslot.ParkingSlot
+		updateProcess.Price = input.Price
+
+		err = ct.s.Edit(token, parkingslotID, updateProcess)
 		if err != nil {
 			var code = http.StatusInternalServerError
 			if strings.Contains(err.Error(), "validation") || strings.Contains(err.Error(), "cek kembali") {
