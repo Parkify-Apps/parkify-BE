@@ -44,13 +44,14 @@ func (ct *controller) Add() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, helper.UserInputError, nil))
 		}
 
+		var status string = "available"
 		var inputProcess parkingslot.ParkingSlot
 		inputProcess.ParkingID = input.ParkingID
 		inputProcess.VehicleType = input.VehicleType
 		inputProcess.Floor = input.Floor
 		inputProcess.Slot = input.Slot
 		inputProcess.Price = input.Price
-		inputProcess.Status = input.Status
+		inputProcess.Status = status
 
 		err = ct.s.Add(token, inputProcess)
 		if err != nil {
@@ -64,7 +65,18 @@ func (ct *controller) Add() echo.HandlerFunc {
 
 func (ct *controller) AllParkingSlot() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		result, err := ct.s.AllParkingSlot()
+		token, ok := c.Get("user").(*jwt.Token)
+		defer func() {
+			if err := recover(); err != nil {
+				log.Println("error jwt creation:", err)
+
+			}
+		}()
+		if !ok {
+			return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, helper.UserInputError, nil))
+		}
+
+		result, err := ct.s.AllParkingSlot(token)
 		if err != nil {
 			var code = http.StatusInternalServerError
 			if strings.Contains(err.Error(), "validation") || strings.Contains(err.Error(), "cek kembali") {

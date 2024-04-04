@@ -14,14 +14,14 @@ type ParkingSlotController interface {
 
 type ParkingSlotModel interface {
 	Add(email string, newSlot ParkingSlot) error
-	AllParkingSlot() ([]ParkingSlot, error)
+	AllParkingSlot(email string) ([]ParkingSlot, error)
 	Edit(email string, parkingSlotID string, editSlot ParkingSlot) error
 	Delete(email string, parkingSlotID string) error
 }
 
 type ParkingSlotServices interface {
 	Add(token *jwt.Token, newSlot ParkingSlot) error
-	AllParkingSlot() ([]ParkingSlot, error)
+	AllParkingSlot(token *jwt.Token) ([]ParkingSlot, error)
 	Edit(token *jwt.Token, parkingSlotID string, editSlot ParkingSlot) error
 	Delete(token *jwt.Token, parkingSlotID string) error
 }

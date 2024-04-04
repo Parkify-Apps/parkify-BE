@@ -6,5 +6,4 @@ type AddParkingSlotRequest struct {
 	Floor       int    `json:"floor"`
 	Slot        int    `json:"slot"`
 	Price       int    `json:"price"`
-	Status      string `json:"status"`
 }

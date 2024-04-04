@@ -45,8 +45,14 @@ func (s *services) Add(token *jwt.Token, newSlot parkingslot.ParkingSlot) error 
 	return nil
 }
 
-func (s *services) AllParkingSlot() ([]parkingslot.ParkingSlot, error) {
-	result, err := s.m.AllParkingSlot()
+func (s *services) AllParkingSlot(token *jwt.Token) ([]parkingslot.ParkingSlot, error) {
+	decodeEmail := middlewares.DecodeToken(token)
+	if decodeEmail == "" {
+		log.Println("error decode token:", "token tidak ditemukan")
+		return nil, errors.New("data tidak valid")
+	}
+
+	result, err := s.m.AllParkingSlot(decodeEmail)
 	if err != nil {
 		return nil, err
 	}
