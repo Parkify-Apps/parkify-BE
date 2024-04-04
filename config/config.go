@@ -5,6 +5,7 @@ import (
 	"os"
 	parking "parkify-BE/features/parking/data"
 	parkingslot "parkify-BE/features/parkingslot/data"
+	reservation "parkify-BE/features/reservation/data"
 	user "parkify-BE/features/user/data"
 
 	"github.com/joho/godotenv"
@@ -78,7 +79,7 @@ func InitSQL(c AppConfig) *gorm.DB {
 		return nil
 	}
 
-	db.AutoMigrate(&user.User{}, &parkingslot.ParkingSlot{}, &parking.Parking{})
+	db.AutoMigrate(&user.User{}, &parkingslot.ParkingSlot{}, &parking.Parking{}, &reservation.Reservation{})
 
 	return db
 }
