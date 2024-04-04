@@ -79,7 +79,7 @@ func (s *services) Edit(token *jwt.Token, parkingSlotID string, editSlot parking
 			log.Println("error validasi", err.Error())
 			return err
 		}
-		err = s.m.Edit(parkingSlotID, editSlot)
+		err = s.m.Edit(decodeEmail, parkingSlotID, editSlot)
 		if err != nil {
 			return errors.New(helper.ServerGeneralError)
 		}

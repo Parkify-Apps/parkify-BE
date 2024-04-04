@@ -140,7 +140,7 @@ func (ct *controller) Delete() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, helper.UserInputError, nil))
 		}
 
-		parkingSlotID := c.Param("parkingSlotID")
+		parkingSlotID := c.Param("id")
 
 		err := ct.s.Delete(token, parkingSlotID)
 		if err != nil {

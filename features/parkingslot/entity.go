@@ -15,7 +15,7 @@ type ParkingSlotController interface {
 type ParkingSlotModel interface {
 	Add(email string, newSlot ParkingSlot) error
 	AllParkingSlot(email string) ([]ParkingSlot, error)
-	Edit(parkingSlotID string, editSlot ParkingSlot) error
+	Edit(email string, parkingSlotID string, editSlot ParkingSlot) error
 	Delete(email string, parkingSlotID string) error
 }
 
@@ -28,10 +28,10 @@ type ParkingSlotServices interface {
 
 type ParkingSlot struct {
 	Email       string
-	ParkingID   uint
-	VehicleType string
-	Floor       int
-	Slot        int
-	Price       int
+	ParkingID   uint   `validate:"required,num"`
+	VehicleType string `validate:"required"`
+	Floor       int    `validate:"required,num"`
+	Slot        int    `validate:"required,num"`
+	Price       int    `validate:"required,num"`
 	Status      string
 }

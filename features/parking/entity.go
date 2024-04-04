@@ -38,21 +38,19 @@ type ParkingModel interface {
 
 type Parking struct {
 	gorm.Model
-	ImageLoc     string                    `json:"imageloc" form:"imageloc"`
-	Location     string                    `json:"location" form:"location"`
-	City         string                    `json:"city" form:"city"`
-	UserID      uint                      `json:"user_id" form:"user_id"`
-	
+	ImageLoc string `json:"imageloc" form:"imageloc"`
+	Location string `json:"location" form:"location"`
+	City     string `json:"city" form:"city"`
+	UserID   uint   `json:"user_id" form:"user_id"`
 }
 type GetParking struct {
 	gorm.Model
-	ImageLoc     string                    `json:"imageloc" form:"imageloc"`
-	Location     string                    `json:"location" form:"location"`
-	City         string                    `json:"city" form:"city"`
-	UserID      uint                      `json:"user_id" form:"user_id"`
+	ImageLoc string `json:"imageloc" form:"imageloc"`
+	Location string `json:"location" form:"location"`
+	City     string `json:"city" form:"city"`
+	UserID   uint   `json:"user_id" form:"user_id"`
 	// ParkingSlots []parkingslot.ParkingSlot `json:"parking_slots"`
 }
-
 
 type AddParkingVal struct {
 	ImageLoc string `validate:"required" form:"imageloc"`
