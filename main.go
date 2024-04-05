@@ -8,6 +8,9 @@ import (
 	parking_slot_data "parkify-BE/features/parkingslot/data"
 	parking_slot_handler "parkify-BE/features/parkingslot/handler"
 	parking_slot_services "parkify-BE/features/parkingslot/services"
+	reservation_data "parkify-BE/features/reservation/data"
+	reservation_handler "parkify-BE/features/reservation/handler"
+	reservation_services "parkify-BE/features/reservation/services"
 	"parkify-BE/features/user/data"
 	"parkify-BE/features/user/handler"
 	"parkify-BE/features/user/services"
@@ -34,10 +37,14 @@ func main() {
 	parkingSlotService := parking_slot_services.ParkingSlotService(parkingSlotData)
 	parkingSlotHandler := parking_slot_handler.NewHandler(parkingSlotService)
 
+	reservationData := reservation_data.New(db)
+	reservationService := reservation_services.ReservationService(reservationData)
+	reservationHandler := reservation_handler.NewHandler(reservationService)
+
 	e.Pre(middleware.RemoveTrailingSlash())
 	e.Use(middleware.Logger())
 	e.Use(middleware.CORS())
-	routes.InitRoute(e, userHandler, parkingHandler, parkingSlotHandler)
-  
+	routes.InitRoute(e, userHandler, parkingHandler, parkingSlotHandler, reservationHandler)
+
 	e.Logger.Fatal(e.Start(":8000"))
 }

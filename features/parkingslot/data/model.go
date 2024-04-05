@@ -1,8 +1,6 @@
 package data
 
 import (
-	"parkify-BE/features/reservation/data"
-
 	"gorm.io/gorm"
 )
 
@@ -15,5 +13,4 @@ type ParkingSlot struct {
 	Slot        int
 	Price       int
 	Status      string
-	Reservation []data.Reservation `gorm:"foreignKey:ParkingSlotID;references:ID"`
 }

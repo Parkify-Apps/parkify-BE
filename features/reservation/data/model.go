@@ -1,6 +1,7 @@
 package data
 
 import (
+	"parkify-BE/features/parkingslot/data"
 	"time"
 
 	"gorm.io/gorm"
@@ -8,7 +9,8 @@ import (
 
 type Reservation struct {
 	gorm.Model
-	Exited_at     time.Time
+	ExitedAt      time.Time
+	Email         string
 	ParkingSlotID uint
-	Price         int
+	ParkingSlot   data.ParkingSlot `gorm:"foreignKey:ParkingSlotID;references:ID"`
 }

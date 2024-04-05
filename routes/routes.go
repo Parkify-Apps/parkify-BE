@@ -4,16 +4,18 @@ import (
 	"parkify-BE/config"
 	"parkify-BE/features/parking"
 	parkingslot "parkify-BE/features/parkingslot"
+	"parkify-BE/features/reservation"
 	user "parkify-BE/features/user"
 
 	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 )
 
-func InitRoute(c *echo.Echo, ct1 user.UserController, pc parking.ParkingController, psc parkingslot.ParkingSlotController) {
+func InitRoute(c *echo.Echo, ct1 user.UserController, pc parking.ParkingController, psc parkingslot.ParkingSlotController, rc reservation.ReservationController) {
 	userRoute(c, ct1)
 	parkingRoute(c, pc)
 	parkingSlotRoute(c, psc)
+	reservationRoute(c, rc)
 }
 
 func userRoute(c *echo.Echo, ct1 user.UserController) {
@@ -56,6 +58,18 @@ func parkingRoute(c *echo.Echo, pc parking.ParkingController) {
 		SigningKey: []byte(config.JWTSECRET),
 	}))
 	c.GET("/parking", pc.GetAllParking(), echojwt.WithConfig(echojwt.Config{
+		SigningKey: []byte(config.JWTSECRET),
+	}))
+}
+
+func reservationRoute(c *echo.Echo, rc reservation.ReservationController) {
+	c.POST("/reservation", rc.Create(), echojwt.WithConfig(echojwt.Config{
+		SigningKey: []byte(config.JWTSECRET),
+	}))
+	c.GET("/reservation", rc.GetHistory(), echojwt.WithConfig(echojwt.Config{
+		SigningKey: []byte(config.JWTSECRET),
+	}))
+	c.GET("/reservation/:id", rc.GetReservationInfo(), echojwt.WithConfig(echojwt.Config{
 		SigningKey: []byte(config.JWTSECRET),
 	}))
 }
