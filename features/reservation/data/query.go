@@ -17,7 +17,7 @@ func New(db *gorm.DB) reservation.ReservationModel {
 	}
 }
 
-func (rm *model) Create(email string, newData reservation.Reservation) error {
+func (rm *model) Create(email string, newData reservation.Reservation) (reservation.Reservation, error) {
 	var inputProcess = Reservation{
 		ExitedAt:      newData.ExitedAt,
 		Email:         email,
@@ -26,11 +26,16 @@ func (rm *model) Create(email string, newData reservation.Reservation) error {
 
 	qry := rm.connection.Create(&inputProcess)
 	if err := qry.Error; err != nil {
-		return err
+		return reservation.Reservation{}, err
 	}
 
 	if qry.RowsAffected < 1 {
-		return errors.New("no data affected")
+		return reservation.Reservation{}, errors.New("no data affected")
+	}
+
+	var reservationResponse reservation.Reservation
+	if err := rm.connection.Where("email = ? AND parking_slot_id = ?", email, newData.ParkingSlotID).First(&reservationResponse).Error; err != nil {
+		return reservation.Reservation{}, err
 	}
 
 	// err := rm.connection.Model(&data.ParkingSlot{}).Where("id = ? AND email = ?", newData.ParkingSlotID, email).Update("status", "not available").Error
@@ -38,13 +43,13 @@ func (rm *model) Create(email string, newData reservation.Reservation) error {
 	// 	return err
 	// }
 
-	return nil
+	return reservationResponse, nil
 }
 
 func (rm *model) GetHistory(email string) ([]reservation.Reservation, error) {
 	var GetHistory []reservation.Reservation
 
-	err := rm.connection.Model(&Reservation{}).Where("email = ?", email).Preload("ParkingSlot").Find(&GetHistory).Error
+	err := rm.connection.Model(&Reservation{}).Where("email = ?", email).Preload("ParkingSlot").Order("id desc").Find(&GetHistory).Error
 	if err != nil {
 		return nil, err
 	}

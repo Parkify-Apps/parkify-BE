@@ -16,13 +16,13 @@ type ReservationController interface {
 }
 
 type ReservationModel interface {
-	Create(email string, newData Reservation) error
+	Create(email string, newData Reservation) (Reservation, error)
 	GetHistory(email string) ([]Reservation, error)
 	GetReservationInfo(email string, reservationID string) (Reservation, error)
 }
 
 type ReservationServices interface {
-	Create(token *jwt.Token, newData Reservation) error
+	Create(token *jwt.Token, newData Reservation) (Reservation, error)
 	GetHistory(token *jwt.Token) ([]Reservation, error)
 	GetReservationInfo(token *jwt.Token, reservationID string) (Reservation, error)
 }
