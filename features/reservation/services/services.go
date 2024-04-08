@@ -38,7 +38,7 @@ func (s *services) Create(token *jwt.Token, newData reservation.Reservation) (re
 	return result, nil
 }
 
-func (s *services) GetHistory(token *jwt.Token) ([]reservation.Reservation, error) {
+func (s *services) GetHistory(token *jwt.Token) ([]reservation.ReservationResponse, error) {
 	decodeEmail := middlewares.DecodeToken(token)
 	if decodeEmail == "" {
 		log.Println("error decode token:", "token tidak ditemukan")
@@ -53,16 +53,16 @@ func (s *services) GetHistory(token *jwt.Token) ([]reservation.Reservation, erro
 	return result, nil
 }
 
-func (s *services) GetReservationInfo(token *jwt.Token, reservationID string) (reservation.Reservation, error) {
+func (s *services) GetReservationInfo(token *jwt.Token, reservationID string) (reservation.ReservationResponse, error) {
 	decodeEmail := middlewares.DecodeToken(token)
 	if decodeEmail == "" {
 		log.Println("error decode token:", "token tidak ditemukan")
-		return reservation.Reservation{}, errors.New("data tidak valid")
+		return reservation.ReservationResponse{}, errors.New("data tidak valid")
 	}
 
 	result, err := s.m.GetReservationInfo(decodeEmail, reservationID)
 	if err != nil {
-		return reservation.Reservation{}, errors.New(helper.ServerGeneralError)
+		return reservation.ReservationResponse{}, errors.New(helper.ServerGeneralError)
 	}
 
 	return result, nil
