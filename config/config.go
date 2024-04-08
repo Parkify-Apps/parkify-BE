@@ -6,6 +6,7 @@ import (
 	parking "parkify-BE/features/parking/data"
 	parkingslot "parkify-BE/features/parkingslot/data"
 	reservation "parkify-BE/features/reservation/data"
+	"parkify-BE/features/transaction"
 	user "parkify-BE/features/user/data"
 
 	"github.com/joho/godotenv"
@@ -21,6 +22,7 @@ type AppConfig struct {
 	DBPort     string
 	DBHost     string
 	DBName     string
+	MDKey      string
 }
 
 func AssignEnv(c AppConfig) (AppConfig, bool) {
@@ -56,6 +58,12 @@ func AssignEnv(c AppConfig) (AppConfig, bool) {
 	} else {
 		missing = true
 	}
+	if val, found := os.LookupEnv("MIDTRANS_SERVER_KEY"); found {
+		c.MDKey = val
+	} else {
+		missing = true
+	}
+	// log.Print(c.MDKey)
 	return c, missing
 }
 
@@ -79,7 +87,7 @@ func InitSQL(c AppConfig) *gorm.DB {
 		return nil
 	}
 
-	db.AutoMigrate(&user.User{}, &parkingslot.ParkingSlot{}, &parking.Parking{}, &reservation.Reservation{})
+	db.AutoMigrate(&user.User{}, &parkingslot.ParkingSlot{}, &parking.Parking{}, &reservation.Reservation{}, &transaction.Transaction{})
 
 	return db
 }
