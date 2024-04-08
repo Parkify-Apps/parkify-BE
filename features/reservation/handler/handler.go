@@ -47,13 +47,16 @@ func (ct *controller) Create() echo.HandlerFunc {
 		var inputProcess reservation.Reservation
 		inputProcess.ParkingSlotID = input.ParkingSlotID
 
-		err = ct.s.Create(token, inputProcess)
+		result, err := ct.s.Create(token, inputProcess)
 		if err != nil {
 			log.Println("error insert db:", err.Error())
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFormat(http.StatusInternalServerError, helper.ServerGeneralError, nil))
 		}
 
-		return c.JSON(http.StatusCreated, helper.ResponseFormat(http.StatusCreated, "success create reservation", nil))
+		var response ReservationResponse
+		response.ID = result.ID
+
+		return c.JSON(http.StatusCreated, helper.ResponseFormat(http.StatusCreated, "success create reservation", response))
 	}
 }
 
