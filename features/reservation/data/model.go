@@ -14,3 +14,17 @@ type Reservation struct {
 	ParkingSlotID uint
 	ParkingSlot   data.ParkingSlot `gorm:"foreignKey:ParkingSlotID;references:ID"`
 }
+
+type ReservationResponse struct {
+	ID            uint
+	Email         string
+	ParkingSlotID uint
+	VehicleType   string
+	Floor         int
+	Slot          int
+	Price         int
+	ParkingID     uint
+	ImageLoc      string
+	Location      string
+	City          string
+}
