@@ -129,19 +129,9 @@ func (s *service) GetParking(token *jwt.Token, parkingID uint) (parking.Parking,
 		return parking.Parking{}, errors.New("data tidak valid")
 	}
 
-	u, err := s.m.GetDataByEmail(email)
-	if err != nil {
-		log.Println("error getting user:", err)
-		return parking.Parking{}, err
-	}
-
 	result, err := s.m.GetDataParkingByID(parkingID)
 	if err != nil {
 		return parking.Parking{}, err
-	}
-
-	if u.ID != result.UserID {
-		return parking.Parking{}, errors.New("anda tidak diizinkan mengakses profil pengguna lainn")
 	}
 
 	return result, nil
