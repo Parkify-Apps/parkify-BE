@@ -1,7 +1,8 @@
 package data
 
 import (
-	"log"
+	
+	"parkify-BE/features/parking"
 	"parkify-BE/features/parkingslot"
 	"parkify-BE/features/reservation"
 	"parkify-BE/features/transaction"
@@ -35,15 +36,25 @@ func (m *model) GetParkingSlot(id uint) (parkingslot.ParkingSlot, error) {
 	return result, nil
 }
 
-func (m *model) CreateTransaction(newData transaction.Transaction) error {
-	// var result transaction.Transaction
-	log.Print(newData.ReservationID)
-	log.Print(newData.Price)
-	log.Print(newData.Status)
-	if err := m.connection.Create(&newData).Error; err != nil {
-		return err
+func (m *model) GetParking(id uint) (parking.Parking, error) {
+	var result parking.Parking
+	if err := m.connection.Where("id = ?", id).Find(&result).Error; err != nil {
+		return parking.Parking{}, err
 	}
-	return nil
+	return result, nil
+}
+
+func (m *model) CreateTransaction(newData transaction.Transaction, reservationID uint) (transaction.Transaction, error) {
+	if err := m.connection.Create(&newData).Error; err != nil {
+		return transaction.Transaction{}, err
+	}
+
+	var response transaction.Transaction
+	if err := m.connection.Where("reservation_id = ?", reservationID).Find(&response).Error; err != nil {
+		return transaction.Transaction{}, err
+	}
+
+	return response, nil
 }
 
 func (m *model) UpdateSuccess(newData transaction.Transaction, orderID uint) error {
@@ -55,4 +66,12 @@ func (m *model) UpdateSuccess(newData transaction.Transaction, orderID uint) err
 		return gorm.ErrRecordNotFound
 	}
 	return nil
+}
+
+func (m *model) Get(id int) (transaction.Transaction, error) {
+	var result transaction.Transaction
+	if err := m.connection.Where("id = ?", id).First(&result).Error; err != nil {
+		return transaction.Transaction{}, err
+	}
+	return result, nil
 }

@@ -3,6 +3,7 @@ package handler
 import (
 	"log"
 	"net/http"
+	"strconv"
 
 	"parkify-BE/features/transaction"
 	"parkify-BE/helper"
@@ -62,5 +63,30 @@ func (ct *controller) PaymentCallback() echo.HandlerFunc {
 		response := ct.s.PaymentCallback(input)
 		return c.JSON(http.StatusOK,
 			helper.ResponseFormat(http.StatusOK, "berhasil mengirim notif", response))
+	}
+}
+
+func (ct *controller) Get() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		token, ok := c.Get("user").(*jwt.Token)
+		if !ok {
+			return c.JSON(http.StatusBadRequest,
+				helper.ResponseFormat(http.StatusBadRequest, helper.UserInputError, nil))
+		}
+
+		id, err := strconv.Atoi(c.Param("id"))
+		if err != nil {
+			return c.JSON(http.StatusBadRequest,
+				helper.ResponseFormat(http.StatusBadRequest, helper.UserInputError, nil))
+		}
+
+		response, err := ct.s.Get(id, token)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest,
+				helper.ResponseFormat(http.StatusBadRequest, helper.UserInputError, nil))
+		}
+
+		return c.JSON(http.StatusOK,
+			helper.ResponseFormat(http.StatusOK, "berhasil mendapatkan data", response))
 	}
 }

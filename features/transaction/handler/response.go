@@ -3,6 +3,31 @@ package handler
 import "github.com/midtrans/midtrans-go/coreapi"
 
 type PaymentResponse struct {
-	VirtualAccount []coreapi.VANumber
-	TransactionID  string
+	TransActionID  uint               `json:"transaction_id"`
+	VirtualAccount []coreapi.VANumber `json:"virtual_account"`
+	// TransactionID  string `json:"transaction_id`
+	ParkingID     uint   `json:"parking_id"`
+	ParkingSlotID uint   `json:"parkingslot_id"`
+	Location      string `json:"location"`
+	City          string `json:"city"`
+	VehicleType   string `json:"vehicle_type"`
+	Floor         int    `json:"floor"`
+	Slot          int    `json:"slot"`
+	Price         int    `json:"price"`
+	StatusMessage string `json:"status_message"`
+}
+
+type FinishPaymentResponse struct {
+	VirtualAccount string `json:"virtual_account"`
+	PaymentMethod  string `json:"payment_method"`
+	ParkingID      uint   `json:"parking_id"`
+	ParkingSlotID  uint   `json:"parkingslot_id"`
+	ReservationID  uint   `json:"reservation_id"`
+	Location       string `json:"location"`
+	City           string `json:"city"`
+	VehicleType    string `json:"vehicle_type"`
+	Floor          int    `json:"floor"`
+	Slot           int    `json:"slot"`
+	Price          int    `json:"price"`
+	// StatusMessage  string `json:"status_message"`
 }

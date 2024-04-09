@@ -1,6 +1,7 @@
 package transaction
 
 import (
+	"parkify-BE/features/parking"
 	"parkify-BE/features/parkingslot"
 	"parkify-BE/features/reservation"
 
@@ -12,18 +13,22 @@ import (
 type TransactionController interface {
 	Transaction() echo.HandlerFunc
 	PaymentCallback() echo.HandlerFunc
+	Get() echo.HandlerFunc
 }
 
 type TransactionServices interface {
 	Transaction(payment PaymentRequest, token *jwt.Token) (any, error)
 	PaymentCallback(payment CallbackRequest) error
+	Get(id int, token *jwt.Token) (any, error)
 }
 
 type TransactionModel interface {
 	GetReservation(id uint) (reservation.Reservation, error)
 	GetParkingSlot(id uint) (parkingslot.ParkingSlot, error)
-	CreateTransaction(newData Transaction) error
+	GetParking(id uint) (parking.Parking, error)
+	CreateTransaction(newData Transaction, reservationID uint) (Transaction, error)
 	UpdateSuccess(newData Transaction, orderID uint) error
+	Get(id int) (Transaction, error)
 }
 
 type Transaction struct {
