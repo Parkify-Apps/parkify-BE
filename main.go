@@ -1,6 +1,7 @@
 package main
 
 import (
+	// "log"
 	"parkify-BE/config"
 	pd "parkify-BE/features/parking/data"
 	ph "parkify-BE/features/parking/handler"
@@ -11,10 +12,14 @@ import (
 	reservation_data "parkify-BE/features/reservation/data"
 	reservation_handler "parkify-BE/features/reservation/handler"
 	reservation_services "parkify-BE/features/reservation/services"
+	tr_data "parkify-BE/features/transaction/data"
+	tr_handler "parkify-BE/features/transaction/handler"
+	tr_services "parkify-BE/features/transaction/services"
 	"parkify-BE/features/user/data"
 	"parkify-BE/features/user/handler"
 	"parkify-BE/features/user/services"
 	"parkify-BE/routes"
+	"parkify-BE/utils"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -24,6 +29,9 @@ func main() {
 	e := echo.New()
 	cfg := config.InitConfig()
 	db := config.InitSQL(cfg)
+
+	md := utils.NewMidtrans(cfg.MDKey)
+	// log.Print(md)
 
 	userData := data.New(db)
 	userService := services.NewService(userData)
@@ -41,10 +49,14 @@ func main() {
 	reservationService := reservation_services.ReservationService(reservationData)
 	reservationHandler := reservation_handler.NewHandler(reservationService)
 
+	transactionData := tr_data.New(db)
+	transactionService := tr_services.NewServices(transactionData, md)
+	transactionHandler := tr_handler.NewHandler(transactionService)
+
 	e.Pre(middleware.RemoveTrailingSlash())
 	e.Use(middleware.Logger())
 	e.Use(middleware.CORS())
-	routes.InitRoute(e, userHandler, parkingHandler, parkingSlotHandler, reservationHandler)
+	routes.InitRoute(e, userHandler, parkingHandler, parkingSlotHandler, reservationHandler, transactionHandler)
 
 	e.Logger.Fatal(e.Start(":8000"))
 }

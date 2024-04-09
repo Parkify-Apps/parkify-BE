@@ -5,17 +5,19 @@ import (
 	"parkify-BE/features/parking"
 	parkingslot "parkify-BE/features/parkingslot"
 	"parkify-BE/features/reservation"
+	"parkify-BE/features/transaction"
 	user "parkify-BE/features/user"
 
 	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 )
 
-func InitRoute(c *echo.Echo, ct1 user.UserController, pc parking.ParkingController, psc parkingslot.ParkingSlotController, rc reservation.ReservationController) {
+func InitRoute(c *echo.Echo, ct1 user.UserController, pc parking.ParkingController, psc parkingslot.ParkingSlotController, rc reservation.ReservationController, t transaction.TransactionController) {
 	userRoute(c, ct1)
 	parkingRoute(c, pc)
 	parkingSlotRoute(c, psc)
 	reservationRoute(c, rc)
+	transactionRoute(c, t)
 }
 
 func userRoute(c *echo.Echo, ct1 user.UserController) {
@@ -70,6 +72,18 @@ func reservationRoute(c *echo.Echo, rc reservation.ReservationController) {
 		SigningKey: []byte(config.JWTSECRET),
 	}))
 	c.GET("/reservation/:id", rc.GetReservationInfo(), echojwt.WithConfig(echojwt.Config{
+		SigningKey: []byte(config.JWTSECRET),
+	}))
+}
+
+func transactionRoute(c *echo.Echo, t transaction.TransactionController) {
+	c.POST("/transaction", t.Transaction(), echojwt.WithConfig(echojwt.Config{
+		SigningKey: []byte(config.JWTSECRET),
+	}))
+	c.POST("/transaction/payment-callback", t.PaymentCallback(), echojwt.WithConfig(echojwt.Config{
+		SigningKey: []byte(config.JWTSECRET),
+	}))
+	c.GET("/transaction/:id", t.Get(), echojwt.WithConfig(echojwt.Config{
 		SigningKey: []byte(config.JWTSECRET),
 	}))
 }

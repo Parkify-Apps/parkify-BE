@@ -51,11 +51,19 @@ func (s *service) PostParking(token *jwt.Token, newData parking.Parking) error {
 		return err
 	}
 
-	err = s.m.PostParking(newData, email)
-	if err != nil {
-		log.Print("error update to model: ", err.Error())
-		return errors.New(helper.ServerGeneralError)
+	decodeRole := middlewares.DecodeRole(token)
+	if decodeRole == "user" {
+		log.Println("role restricted:", "user tidak bisa mengakses fitur ini")
+		return errors.New("user tidak bisa mengakses fitur ini")
+
+	} else if decodeRole == "operator" {
+		err = s.m.PostParking(newData, email)
+		if err != nil {
+			log.Print("error update to model: ", err.Error())
+			return errors.New(helper.ServerGeneralError)
+		}
 	}
+
 	return nil
 }
 
@@ -103,10 +111,17 @@ func (s *service) UpdateParking(parkingID int, token *jwt.Token, newData parking
 		updateFields["image_loc"] = newData.ImageLoc
 	}
 
-	err = s.m.Update(parkingID, updateFields, user.UserID)
-	if err != nil {
-		log.Print("error update to model: ", err.Error())
-		return errors.New(helper.ServerGeneralError)
+	decodeRole := middlewares.DecodeRole(token)
+	if decodeRole == "user" {
+		log.Println("role restricted:", "user tidak bisa mengakses fitur ini")
+		return errors.New("user tidak bisa mengakses fitur ini")
+
+	} else if decodeRole == "operator" {
+		err = s.m.Update(parkingID, updateFields, user.UserID)
+		if err != nil {
+			log.Print("error update to model: ", err.Error())
+			return errors.New(helper.ServerGeneralError)
+		}
 	}
 
 	return nil
@@ -132,6 +147,13 @@ func (s *service) GetParking(token *jwt.Token, parkingID uint) (parking.Parking,
 	result, err := s.m.GetDataParkingByID(parkingID)
 	if err != nil {
 		return parking.Parking{}, err
+	}
+
+	decodeRole := middlewares.DecodeRole(token)
+	if decodeRole == "operator" {
+		if u.ID != result.UserID {
+			return parking.Parking{}, errors.New("anda tidak diizinkan mengakses profil pengguna lainn")
+		}
 	}
 
 	return result, nil
