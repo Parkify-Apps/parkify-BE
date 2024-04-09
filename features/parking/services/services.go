@@ -149,13 +149,6 @@ func (s *service) GetParking(token *jwt.Token, parkingID uint) (parking.Parking,
 		return parking.Parking{}, err
 	}
 
-	decodeRole := middlewares.DecodeRole(token)
-	if decodeRole == "operator" {
-		if u.ID != result.UserID {
-			return parking.Parking{}, errors.New("anda tidak diizinkan mengakses profil pengguna lainn")
-		}
-	}
-
 	return result, nil
 }
 
