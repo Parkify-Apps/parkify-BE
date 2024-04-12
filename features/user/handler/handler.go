@@ -139,6 +139,7 @@ func (ct *controller) Profile() echo.HandlerFunc {
 		}
 
 		var response ProfileResponse
+		response.ID = result.ID
 		response.Fullname = result.Fullname
 		response.Email = result.Email
 
