@@ -20,6 +20,12 @@ func New(db *gorm.DB) reservation.ReservationModel {
 }
 
 func (rm *model) Create(email string, newData reservation.Reservation) (reservation.Reservation, error) {
+	var parkingSlot data.ParkingSlot
+	if err := rm.connection.Model(&data.ParkingSlot{}).Where("id = ? AND status = ?", newData.ParkingSlotID, "available").First(&parkingSlot).Error; err != nil {
+		return reservation.Reservation{}, errors.New("parking slot not available")
+	}
+
+	// Create new reservation
 	var inputProcess = Reservation{
 		ExitedAt:      newData.ExitedAt,
 		Email:         email,
@@ -36,14 +42,13 @@ func (rm *model) Create(email string, newData reservation.Reservation) (reservat
 	}
 
 	var reservationResponse reservation.Reservation
-	if err := rm.connection.Where("email = ? AND parking_slot_id = ?", email, newData.ParkingSlotID).First(&reservationResponse).Error; err != nil {
+	if err := rm.connection.Where("email = ? AND parking_slot_id = ?", email, newData.ParkingSlotID).Last(&reservationResponse).Error; err != nil {
 		return reservation.Reservation{}, err
 	}
 
-	var qry2 = rm.connection.Model(&data.ParkingSlot{}).Where("id = ?", newData.ParkingSlotID).Update("status", "not available")
-
-	err := qry2.Error
-	if err != nil {
+	// Update the status of the parking slot
+	qry2 := rm.connection.Model(&data.ParkingSlot{}).Where("id = ?", newData.ParkingSlotID).Update("status", "not available")
+	if err := qry2.Error; err != nil {
 		return reservation.Reservation{}, err
 	}
 
@@ -51,6 +56,7 @@ func (rm *model) Create(email string, newData reservation.Reservation) (reservat
 		return reservation.Reservation{}, errors.New("no data affected")
 	}
 
+	// Return the created reservation
 	return reservationResponse, nil
 }
 

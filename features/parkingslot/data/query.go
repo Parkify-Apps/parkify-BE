@@ -2,6 +2,7 @@ package data
 
 import (
 	"errors"
+	"log"
 	"parkify-BE/features/parkingslot"
 
 	"gorm.io/gorm"
@@ -18,6 +19,19 @@ func New(db *gorm.DB) parkingslot.ParkingSlotModel {
 }
 
 func (psm *model) Add(email string, newSlot parkingslot.ParkingSlot) error {
+	var existingSlot ParkingSlot
+	if err := psm.connection.
+		Model(&ParkingSlot{}).
+		Where("floor = ? AND slot = ?", newSlot.Floor, newSlot.Slot).
+		First(&existingSlot).Error; err != nil {
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			return err // Error other than "record not found"
+		}
+	} else {
+		return errors.New("data already exists")
+	}
+
+	// Create new entry
 	var inputProcess = ParkingSlot{
 		Email:       email,
 		ParkingID:   newSlot.ParkingID,
@@ -28,7 +42,7 @@ func (psm *model) Add(email string, newSlot parkingslot.ParkingSlot) error {
 		Status:      newSlot.Status,
 	}
 
-	qry := psm.connection.Model(&inputProcess).Where("email = ? AND parking_id = ?", email, newSlot.ParkingID).Create(&inputProcess)
+	qry := psm.connection.Create(&inputProcess)
 	if err := qry.Error; err != nil {
 		return err
 	}
@@ -36,13 +50,14 @@ func (psm *model) Add(email string, newSlot parkingslot.ParkingSlot) error {
 	if qry.RowsAffected < 1 {
 		return errors.New("no data affected")
 	}
+
 	return nil
 }
 
 func (psm *model) AllParkingSlot(email string) ([]parkingslot.ParkingSlot, error) {
 	var AllSlot []parkingslot.ParkingSlot
 
-	err := psm.connection.Where("email = ?", email).Find(&AllSlot).Error
+	err := psm.connection.Raw("SELECT * FROM parking_slots WHERE parking_slots.email = ? AND parking_slots.deleted_at IS NULL", email).Find(&AllSlot).Error
 	if err != nil {
 		return nil, err
 	}
@@ -66,9 +81,10 @@ func (psm *model) Edit(email string, parkingSlotID string, editSlot parkingslot.
 
 func (psm *model) Delete(email string, parkingSlotID string) error {
 
-	qry := psm.connection.Where("email = ? AND id = ?", email, parkingSlotID).Delete(&parkingslot.ParkingSlot{})
+	qry := psm.connection.Model(&ParkingSlot{}).Where("email = ? AND id = ?", email, parkingSlotID).Delete(&parkingSlotID)
 
 	if err := qry.Error; err != nil {
+		log.Print("error to database :", err.Error())
 		return err
 	}
 

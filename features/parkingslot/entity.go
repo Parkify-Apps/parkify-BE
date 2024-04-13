@@ -27,6 +27,7 @@ type ParkingSlotServices interface {
 }
 
 type ParkingSlot struct {
+	ID          uint
 	Email       string
 	ParkingID   uint   `validate:"required,num"`
 	VehicleType string `validate:"required"`

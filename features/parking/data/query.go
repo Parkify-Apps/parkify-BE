@@ -83,7 +83,7 @@ func (m *model) GetAllParking(userID uint) ([]parking.Parking, error) {
 
 func (m *model) GetAllSlotByID(parkingID uint) ([]parkingslot.ParkingSlot, error) {
 	var result []parkingslot.ParkingSlot
-	if err := m.connection.Where("parking_id = ?", parkingID).Find(&result).Error; err != nil {
+	if err := m.connection.Raw("SELECT * from parking_slots WHERE parking_slots.parking_id = ? AND parking_slots.deleted_at IS NULL", parkingID).Find(&result).Error; err != nil {
 		return nil, err
 	}
 	return result, nil
