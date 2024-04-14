@@ -3,6 +3,7 @@ package services
 import (
 	"errors"
 	"log"
+	"parkify-BE/features/parkingslot"
 	"parkify-BE/features/reservation"
 	"parkify-BE/features/transaction"
 	"parkify-BE/features/transaction/handler"
@@ -110,6 +111,27 @@ func (s *service) PaymentCallback(payment transaction.CallbackRequest) error {
 		return err
 	}
 
+	res, err := s.m.GetReservation(uint(num))
+	if err != nil {
+		log.Println("error getting reservation:", err)
+		return err
+	}
+
+	result, err := s.m.GetParkingSlot(res.ParkingSlotID)
+	if err != nil {
+		log.Println("error getting parking slot:", err)
+		return err
+	}
+	log.Println(result.ID)
+
+	var newData parkingslot.ParkingSlot
+	newData.Status = "available"
+	// newData.ID = uint(num)
+	err = s.m.UpdateAvailable(newData, result.ID)
+	if err != nil {
+		log.Println("error update status parking slot:", err)
+		return err
+	}
 	// _, err = s.m.GetReservation(uint(num))
 	// if err != nil {
 	// 	log.Println("error getting reservation:", err)

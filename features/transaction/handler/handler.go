@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"log"
 	"net/http"
 	"strconv"
@@ -10,6 +11,7 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
+	"gorm.io/gorm"
 )
 
 type controller struct {
@@ -41,6 +43,10 @@ func (ct *controller) Transaction() echo.HandlerFunc {
 		response, err := ct.s.Transaction(input, token)
 		if err != nil {
 			log.Println("error bind data:", err.Error())
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return c.JSON(http.StatusNotFound,
+					helper.ResponseFormat(http.StatusNotFound, "data tidak ditemukan", nil))
+			}
 			return c.JSON(http.StatusInternalServerError,
 				helper.ResponseFormat(http.StatusInternalServerError, helper.ServerGeneralError, nil))
 		}

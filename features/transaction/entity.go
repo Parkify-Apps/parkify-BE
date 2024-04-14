@@ -28,6 +28,7 @@ type TransactionModel interface {
 	GetParking(id uint) (parking.Parking, error)
 	CreateTransaction(newData Transaction, reservationID uint) (Transaction, error)
 	UpdateSuccess(newData Transaction, orderID uint) error
+	UpdateAvailable(newData parkingslot.ParkingSlot, slotID uint) error
 	Get(id int) (Transaction, error)
 }
 
