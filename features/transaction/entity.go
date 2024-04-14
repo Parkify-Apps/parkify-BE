@@ -42,7 +42,7 @@ type Transaction struct {
 
 type PaymentRequest struct {
 	ReservationID uint   `json:"reservation_id"`
-	PaymentMethod string `json:"payment"`
+	PaymentMethod string `json:"payment_method"`
 }
 
 type CallbackRequest struct {
