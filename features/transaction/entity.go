@@ -28,6 +28,7 @@ type TransactionModel interface {
 	GetParking(id uint) (parking.Parking, error)
 	CreateTransaction(newData Transaction, reservationID uint) (Transaction, error)
 	UpdateSuccess(newData Transaction, orderID uint) error
+	UpdateAvailable(newData parkingslot.ParkingSlot, slotID uint) error
 	Get(id int) (Transaction, error)
 }
 
@@ -42,7 +43,7 @@ type Transaction struct {
 
 type PaymentRequest struct {
 	ReservationID uint   `json:"reservation_id"`
-	PaymentMethod string `json:"payment"`
+	PaymentMethod string `json:"payment_method"`
 }
 
 type CallbackRequest struct {

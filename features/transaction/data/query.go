@@ -68,6 +68,17 @@ func (m *model) UpdateSuccess(newData transaction.Transaction, orderID uint) err
 	return nil
 }
 
+func (m *model) UpdateAvailable(newData parkingslot.ParkingSlot, slotID uint) error {
+	var qry = m.connection.Where("id = ?", slotID).Updates(&newData)
+	if err := qry.Error; err != nil {
+		return err
+	}
+	if qry.RowsAffected < 1 {
+		return gorm.ErrRecordNotFound
+	}
+	return nil
+}
+
 func (m *model) Get(id int) (transaction.Transaction, error) {
 	var result transaction.Transaction
 	if err := m.connection.Where("id = ?", id).First(&result).Error; err != nil {
