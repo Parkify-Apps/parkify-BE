@@ -58,7 +58,7 @@ func AssignEnv(c AppConfig) (AppConfig, bool) {
 	} else {
 		missing = true
 	}
-	if val, found := os.LookupEnv("MIDTRANS_SERVERKEY"); found {
+	if val, found := os.LookupEnv("MDKey"); found {
 		c.MDKey = val
 	} else {
 		missing = true
