@@ -69,8 +69,7 @@ func (s *service) Transaction(payment transaction.PaymentRequest, token *jwt.Tok
 			return nil, errors.New("anda tidak diizinkan mengakses profil pengguna lainn")
 		}
 
-		idBook := "a" + str
-		resp, err := s.mdtrans.PaymentVABCA(idBook, result.Price)
+		resp, err := s.mdtrans.PaymentVABCA(str, result.Price)
 		if err != nil {
 			log.Println("error payment:", err)
 			return reservation.Reservation{}, err
@@ -78,7 +77,6 @@ func (s *service) Transaction(payment transaction.PaymentRequest, token *jwt.Tok
 
 		var newData transaction.Transaction
 		newData.ReservationID = res.ID
-		newData.OrderID = idBook
 		newData.PaymentMethod = "VA BCA"
 		newData.Price = result.Price
 		// newData.Status = "success"
@@ -102,7 +100,6 @@ func (s *service) Transaction(payment transaction.PaymentRequest, token *jwt.Tok
 		response.ParkingID = result.ParkingID
 		response.ParkingSlotID = res.ParkingSlotID
 		response.StatusMessage = resp.StatusMessage
-		response.OrderID = idBook
 
 	}
 	return response, nil
@@ -207,7 +204,6 @@ func (s *service) Get(id int, token *jwt.Token) (any, error) {
 		response.ParkingID = result.ParkingID
 		response.ParkingSlotID = res.ParkingSlotID
 		response.ReservationID = res.ID
-		response.OrderID = resGet.OrderID
 
 	}
 	return response, nil

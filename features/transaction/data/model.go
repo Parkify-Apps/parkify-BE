@@ -7,7 +7,6 @@ import (
 
 type Transaction struct {
 	gorm.Model
-	OrderID string
 	ReservationID uint
 	PaymentMethod string
 	Price         int

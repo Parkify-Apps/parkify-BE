@@ -3,7 +3,6 @@ package handler
 import "github.com/midtrans/midtrans-go/coreapi"
 
 type PaymentResponse struct {
-	OrderID        string
 	TransActionID  uint               `json:"transaction_id"`
 	VirtualAccount []coreapi.VANumber `json:"virtual_account"`
 	// TransactionID  string `json:"transaction_id`
@@ -19,7 +18,6 @@ type PaymentResponse struct {
 }
 
 type FinishPaymentResponse struct {
-	OrderID        string
 	VirtualAccount string `json:"virtual_account"`
 	PaymentMethod  string `json:"payment_method"`
 	ParkingID      uint   `json:"parking_id"`
