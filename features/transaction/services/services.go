@@ -69,7 +69,8 @@ func (s *service) Transaction(payment transaction.PaymentRequest, token *jwt.Tok
 			return nil, errors.New("anda tidak diizinkan mengakses profil pengguna lainn")
 		}
 
-		resp, err := s.mdtrans.PaymentVABCA(str, result.Price)
+		idBook := "a" + str
+		resp, err := s.mdtrans.PaymentVABCA(idBook, result.Price)
 		if err != nil {
 			log.Println("error payment:", err)
 			return reservation.Reservation{}, err
@@ -77,6 +78,7 @@ func (s *service) Transaction(payment transaction.PaymentRequest, token *jwt.Tok
 
 		var newData transaction.Transaction
 		newData.ReservationID = res.ID
+		newData.OrderID = idBook
 		newData.PaymentMethod = "VA BCA"
 		newData.Price = result.Price
 		// newData.Status = "success"
@@ -100,18 +102,25 @@ func (s *service) Transaction(payment transaction.PaymentRequest, token *jwt.Tok
 		response.ParkingID = result.ParkingID
 		response.ParkingSlotID = res.ParkingSlotID
 		response.StatusMessage = resp.StatusMessage
+		response.OrderID = idBook
 
 	}
 	return response, nil
 }
 
 func (s *service) PaymentCallback(payment transaction.CallbackRequest) error {
-	num, err := strconv.ParseUint(payment.OrderID, 10, 64)
+	// num, err := strconv.ParseUint(payment.OrderID, 10, 64)
+	// if err != nil {
+	// 	return err
+	// }
+
+	resGet, err := s.m.GetIDByOrderID(payment.OrderID)
 	if err != nil {
+		log.Println("error getting ID by orderID:", err)
 		return err
 	}
 
-	res, err := s.m.GetReservation(uint(num))
+	res, err := s.m.GetReservation(resGet.ID)
 	if err != nil {
 		log.Println("error getting reservation:", err)
 		return err
@@ -122,7 +131,6 @@ func (s *service) PaymentCallback(payment transaction.CallbackRequest) error {
 		log.Println("error getting parking slot:", err)
 		return err
 	}
-	log.Println(result.ID)
 
 	var newData parkingslot.ParkingSlot
 	newData.Status = "available"
@@ -140,8 +148,8 @@ func (s *service) PaymentCallback(payment transaction.CallbackRequest) error {
 
 	var update transaction.Transaction
 	update.Status = "success"
-	update.ID = uint(num)
-	err = s.m.UpdateSuccess(update, uint(num))
+	// update.ID = resGet.ID
+	err = s.m.UpdateSuccess(update, resGet.ID)
 	if err != nil {
 		log.Println("error update success:", err)
 		return err
@@ -195,6 +203,7 @@ func (s *service) Get(id int, token *jwt.Token) (any, error) {
 
 		response.VirtualAccount = resGet.VirtualAccount
 		response.PaymentMethod = resGet.PaymentMethod
+		response.OrderID = resGet.OrderID
 		response.City = resultP.City
 		response.Location = resultP.Location
 		response.VehicleType = result.VehicleType

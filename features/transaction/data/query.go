@@ -86,3 +86,11 @@ func (m *model) Get(id int) (transaction.Transaction, error) {
 	}
 	return result, nil
 }
+
+func (m *model) GetIDByOrderID(orderID string) (transaction.Transaction, error) {
+	var result transaction.Transaction
+	if err := m.connection.Where("order_id = ?", orderID).First(&result).Error; err != nil {
+		return transaction.Transaction{}, err
+	}
+	return result, nil
+}

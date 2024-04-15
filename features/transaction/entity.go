@@ -30,10 +30,12 @@ type TransactionModel interface {
 	UpdateSuccess(newData Transaction, orderID uint) error
 	UpdateAvailable(newData parkingslot.ParkingSlot, slotID uint) error
 	Get(id int) (Transaction, error)
+	GetIDByOrderID(orderID string) (Transaction, error)
 }
 
 type Transaction struct {
 	gorm.Model
+	OrderID string
 	ReservationID  uint
 	PaymentMethod  string
 	Price          int
