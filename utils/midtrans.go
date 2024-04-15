@@ -56,4 +56,3 @@ func (m *mdtrans) PaymentVABCA(idBook string, price int) (*coreapi.ChargeRespons
 
 	return chargeResp, nil
 }
-
