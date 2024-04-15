@@ -14,12 +14,14 @@ import (
 type service struct {
 	model user.UserModel
 	pm    helper.PasswordManager
+	md    middlewares.JwtInterface
 	v     *validator.Validate
 }
 
-func NewService(m user.UserModel) user.UserService {
+func NewService(m user.UserModel, md middlewares.JwtInterface) user.UserService {
 	return &service{
 		model: m,
+		md: md,
 		pm:    helper.NewPasswordManager(),
 		v:     validator.New(),
 	}
@@ -73,7 +75,7 @@ func (s *service) Login(loginData user.User) (user.User, string, error) {
 		return user.User{}, "", errors.New(helper.UserCredentialError)
 	}
 
-	token, err := middlewares.GenerateJWT(dbData.Email, dbData.Role)
+	token, err := s.md.GenerateJWT(dbData.Email, dbData.Role)
 	if err != nil {
 		log.Println("error generate", err.Error())
 		return user.User{}, "", errors.New(helper.ServiceGeneralError)
@@ -83,7 +85,7 @@ func (s *service) Login(loginData user.User) (user.User, string, error) {
 }
 
 func (s *service) Profile(token *jwt.Token) (user.User, error) {
-	decodeEmail := middlewares.DecodeToken(token)
+	decodeEmail := s.md.DecodeToken(token)
 	if decodeEmail == "" {
 		log.Println("error decode token:", "token tidak ditemukan")
 		return user.User{}, errors.New("data tidak valid")
@@ -102,7 +104,7 @@ func (s *service) Profile(token *jwt.Token) (user.User, error) {
 }
 
 func (s *service) UpdateProfile(token *jwt.Token, newData user.User) error {
-	email := middlewares.DecodeToken(token)
+	email := s.md.DecodeToken(token)
 	if email == "" {
 		log.Println("error decode token:", "token tidak ditemukan")
 		return errors.New("data tidak valid")
@@ -135,7 +137,7 @@ func (s *service) UpdateProfile(token *jwt.Token, newData user.User) error {
 }
 
 func (s *service) DeleteAccount(token *jwt.Token) error {
-	email := middlewares.DecodeToken(token)
+	email := s.md.DecodeToken(token)
 	if email == "" {
 		log.Println("error decode token:", "token tidak ditemukan")
 		return errors.New("data tidak valid")

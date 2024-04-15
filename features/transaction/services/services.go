@@ -18,19 +18,21 @@ import (
 type service struct {
 	m       transaction.TransactionModel
 	v       *validator.Validate
+	md      middlewares.JwtInterface
 	mdtrans utils.PaymentFunc
 }
 
-func NewServices(model transaction.TransactionModel, m utils.PaymentFunc) transaction.TransactionServices {
+func NewServices(model transaction.TransactionModel, m utils.PaymentFunc, md middlewares.JwtInterface) transaction.TransactionServices {
 	return &service{
 		m:       model,
+		md:      md,
 		v:       validator.New(),
 		mdtrans: m,
 	}
 }
 
 func (s *service) Transaction(payment transaction.PaymentRequest, token *jwt.Token) (any, error) {
-	email := middlewares.DecodeToken(token)
+	email := s.md.DecodeToken(token)
 	if email == "" {
 		log.Println("error decode token:", "token tidak ditemukan")
 		return reservation.Reservation{}, errors.New("data tidak valid")
@@ -59,7 +61,7 @@ func (s *service) Transaction(payment transaction.PaymentRequest, token *jwt.Tok
 
 	var response handler.PaymentResponse
 
-	decodeRole := middlewares.DecodeRole(token)
+	decodeRole := s.md.DecodeRole(token)
 	if decodeRole == "operator" {
 		log.Println("role restricted:", "operator tidak bisa mengakses fitur ini")
 		return reservation.Reservation{}, errors.New("operator tidak bisa mengakses fitur ini")
@@ -161,13 +163,13 @@ func (s *service) PaymentCallback(payment transaction.CallbackRequest) error {
 func (s *service) Get(id int, token *jwt.Token) (any, error) {
 	var response handler.FinishPaymentResponse
 
-	decodeRole := middlewares.DecodeRole(token)
+	decodeRole := s.md.DecodeRole(token)
 	if decodeRole == "operator" {
 		log.Println("role restricted:", "operator tidak bisa mengakses fitur ini")
 		return nil, errors.New("operator tidak bisa mengakses fitur ini")
 	} else if decodeRole == "user" {
 
-		email := middlewares.DecodeToken(token)
+		email := s.md.DecodeToken(token)
 		if email == "" {
 			log.Println("error decode token:", "token tidak ditemukan")
 			return reservation.Reservation{}, errors.New("data tidak valid")

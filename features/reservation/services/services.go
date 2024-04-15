@@ -12,19 +12,21 @@ import (
 )
 
 type services struct {
-	m reservation.ReservationModel
-	v *validator.Validate
+	m  reservation.ReservationModel
+	v  *validator.Validate
+	md middlewares.JwtInterface
 }
 
-func ReservationService(model reservation.ReservationModel) reservation.ReservationServices {
+func ReservationService(model reservation.ReservationModel, md middlewares.JwtInterface) reservation.ReservationServices {
 	return &services{
-		m: model,
-		v: validator.New(),
+		m:  model,
+		md: md,
+		v:  validator.New(),
 	}
 }
 
 func (s *services) Create(token *jwt.Token, newData reservation.Reservation) (reservation.Reservation, error) {
-	decodeEmail := middlewares.DecodeToken(token)
+	decodeEmail := s.md.DecodeToken(token)
 	if decodeEmail == "" {
 		log.Println("error decode token:", "token tidak ditemukan")
 		return reservation.Reservation{}, errors.New("data tidak valid")
@@ -39,7 +41,7 @@ func (s *services) Create(token *jwt.Token, newData reservation.Reservation) (re
 }
 
 func (s *services) GetHistory(token *jwt.Token) ([]reservation.ReservationResponse, error) {
-	decodeEmail := middlewares.DecodeToken(token)
+	decodeEmail := s.md.DecodeToken(token)
 	if decodeEmail == "" {
 		log.Println("error decode token:", "token tidak ditemukan")
 		return nil, errors.New("data tidak valid")
@@ -54,7 +56,7 @@ func (s *services) GetHistory(token *jwt.Token) ([]reservation.ReservationRespon
 }
 
 func (s *services) GetReservationInfo(token *jwt.Token, reservationID string) (reservation.ReservationResponse, error) {
-	decodeEmail := middlewares.DecodeToken(token)
+	decodeEmail := s.md.DecodeToken(token)
 	if decodeEmail == "" {
 		log.Println("error decode token:", "token tidak ditemukan")
 		return reservation.ReservationResponse{}, errors.New("data tidak valid")

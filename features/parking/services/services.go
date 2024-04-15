@@ -15,17 +15,19 @@ import (
 type service struct {
 	m parking.ParkingModel
 	v *validator.Validate
+	md    middlewares.JwtInterface
 }
 
-func NewService(model parking.ParkingModel) parking.ParkingServices {
+func NewService(model parking.ParkingModel,  md middlewares.JwtInterface) parking.ParkingServices {
 	return &service{
 		m: model,
+		md : md,
 		v: validator.New(),
 	}
 }
 
 func (s *service) PostParking(token *jwt.Token, newData parking.Parking) error {
-	email := middlewares.DecodeToken(token)
+	email := s.md.DecodeToken(token)
 	if email == "" {
 		log.Println("error decode token:", "token tidak ditemukan")
 		return errors.New("data tidak valid")
@@ -51,7 +53,7 @@ func (s *service) PostParking(token *jwt.Token, newData parking.Parking) error {
 		return err
 	}
 
-	decodeRole := middlewares.DecodeRole(token)
+	decodeRole := s.md.DecodeRole(token)
 	if decodeRole == "user" {
 		log.Println("role restricted:", "user tidak bisa mengakses fitur ini")
 		return errors.New("user tidak bisa mengakses fitur ini")
@@ -68,7 +70,7 @@ func (s *service) PostParking(token *jwt.Token, newData parking.Parking) error {
 }
 
 func (s *service) UpdateParking(parkingID int, token *jwt.Token, newData parking.Parking) error {
-	email := middlewares.DecodeToken(token)
+	email := s.md.DecodeToken(token)
 	if email == "" {
 		log.Println("error decode token:", "token tidak ditemukan")
 		return errors.New("data tidak valid")
@@ -111,7 +113,7 @@ func (s *service) UpdateParking(parkingID int, token *jwt.Token, newData parking
 		updateFields["image_loc"] = newData.ImageLoc
 	}
 
-	decodeRole := middlewares.DecodeRole(token)
+	decodeRole := s.md.DecodeRole(token)
 	if decodeRole == "user" {
 		log.Println("role restricted:", "user tidak bisa mengakses fitur ini")
 		return errors.New("user tidak bisa mengakses fitur ini")
@@ -138,7 +140,7 @@ func (s *service) GetPicture(parkingID int) (parking.Parking, error) {
 }
 
 func (s *service) GetParking(token *jwt.Token, parkingID uint) (parking.Parking, error) {
-	email := middlewares.DecodeToken(token)
+	email := s.md.DecodeToken(token)
 	if email == "" {
 		log.Println("error decode token:", "token tidak ditemukan")
 		return parking.Parking{}, errors.New("data tidak valid")

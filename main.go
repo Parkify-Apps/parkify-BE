@@ -18,6 +18,7 @@ import (
 	"parkify-BE/features/user/data"
 	"parkify-BE/features/user/handler"
 	"parkify-BE/features/user/services"
+	"parkify-BE/middlewares"
 	"parkify-BE/routes"
 	"parkify-BE/utils"
 
@@ -34,23 +35,23 @@ func main() {
 	// log.Print(md)
 
 	userData := data.New(db)
-	userService := services.NewService(userData)
+	userService := services.NewService(userData, middlewares.NewMidlewareJWT())
 	userHandler := handler.NewUserHandler(userService)
 
 	parkingData := pd.New(db)
-	parkingService := ps.NewService(parkingData)
+	parkingService := ps.NewService(parkingData, middlewares.NewMidlewareJWT())
 	parkingHandler := ph.NewHandler(parkingService)
 
 	parkingSlotData := parking_slot_data.New(db)
-	parkingSlotService := parking_slot_services.ParkingSlotService(parkingSlotData)
+	parkingSlotService := parking_slot_services.ParkingSlotService(parkingSlotData, middlewares.NewMidlewareJWT())
 	parkingSlotHandler := parking_slot_handler.NewHandler(parkingSlotService)
 
 	reservationData := reservation_data.New(db)
-	reservationService := reservation_services.ReservationService(reservationData)
+	reservationService := reservation_services.ReservationService(reservationData, middlewares.NewMidlewareJWT())
 	reservationHandler := reservation_handler.NewHandler(reservationService)
 
 	transactionData := tr_data.New(db)
-	transactionService := tr_services.NewServices(transactionData, md)
+	transactionService := tr_services.NewServices(transactionData, md, middlewares.NewMidlewareJWT())
 	transactionHandler := tr_handler.NewHandler(transactionService)
 
 	e.Pre(middleware.RemoveTrailingSlash())

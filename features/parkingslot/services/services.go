@@ -14,23 +14,25 @@ import (
 type services struct {
 	m parkingslot.ParkingSlotModel
 	v *validator.Validate
+	md    middlewares.JwtInterface
 }
 
-func ParkingSlotService(model parkingslot.ParkingSlotModel) parkingslot.ParkingSlotServices {
+func ParkingSlotService(model parkingslot.ParkingSlotModel, md middlewares.JwtInterface) parkingslot.ParkingSlotServices {
 	return &services{
 		m: model,
+		md: md,
 		v: validator.New(),
 	}
 }
 
 func (s *services) Add(token *jwt.Token, newSlot parkingslot.ParkingSlot) error {
-	decodeEmail := middlewares.DecodeToken(token)
+	decodeEmail := s.md.DecodeToken(token)
 	if decodeEmail == "" {
 		log.Println("error decode token:", "token tidak ditemukan")
 		return errors.New("data tidak valid")
 	}
 
-	decodeRole := middlewares.DecodeRole(token)
+	decodeRole := s.md.DecodeRole(token)
 	if decodeRole == "user" {
 		log.Println("role restricted:", "user tidak bisa mengakses fitur ini")
 		return errors.New("user tidak bisa mengakses fitur ini")
@@ -46,7 +48,7 @@ func (s *services) Add(token *jwt.Token, newSlot parkingslot.ParkingSlot) error 
 }
 
 func (s *services) AllParkingSlot(token *jwt.Token) ([]parkingslot.ParkingSlot, error) {
-	decodeEmail := middlewares.DecodeToken(token)
+	decodeEmail := s.md.DecodeToken(token)
 	if decodeEmail == "" {
 		log.Println("error decode token:", "token tidak ditemukan")
 		return nil, errors.New("data tidak valid")
@@ -61,7 +63,7 @@ func (s *services) AllParkingSlot(token *jwt.Token) ([]parkingslot.ParkingSlot, 
 }
 
 func (s *services) Edit(token *jwt.Token, parkingSlotID string, editSlot parkingslot.ParkingSlot) error {
-	decodeEmail := middlewares.DecodeToken(token)
+	decodeEmail := s.md.DecodeToken(token)
 	if decodeEmail == "" {
 		log.Println("error decode token:", "token tidak ditemukan")
 		return errors.New("data tidak valid")
@@ -76,13 +78,13 @@ func (s *services) Edit(token *jwt.Token, parkingSlotID string, editSlot parking
 }
 
 func (s *services) Delete(token *jwt.Token, parkingSlotID string) error {
-	decodeEmail := middlewares.DecodeToken(token)
+	decodeEmail := s.md.DecodeToken(token)
 	if decodeEmail == "" {
 		log.Println("error decode token:", "token tidak ditemukan")
 		return errors.New("data tidak valid")
 	}
 
-	decodeRole := middlewares.DecodeRole(token)
+	decodeRole := s.md.DecodeRole(token)
 	if decodeRole == "user" {
 		log.Println("role restricted:", "user tidak bisa mengakses fitur ini")
 		return errors.New("user tidak bisa mengakses fitur ini")
