@@ -10,4 +10,5 @@ type ProfileResponse struct {
 	ID       uint   `json:"user_id"`
 	Fullname string `json:"fullname"`
 	Email    string `json:"email"`
+	Role     string `json:"role"`
 }

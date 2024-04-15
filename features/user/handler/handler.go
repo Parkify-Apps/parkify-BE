@@ -142,6 +142,7 @@ func (ct *controller) Profile() echo.HandlerFunc {
 		response.ID = result.ID
 		response.Fullname = result.Fullname
 		response.Email = result.Email
+		response.Role = result.Role
 
 		return c.JSON(http.StatusOK,
 			helper.ResponseFormat(http.StatusOK, "berhasil mendapatkan data", response))

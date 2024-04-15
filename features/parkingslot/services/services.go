@@ -67,22 +67,9 @@ func (s *services) Edit(token *jwt.Token, parkingSlotID string, editSlot parking
 		return errors.New("data tidak valid")
 	}
 
-	decodeRole := middlewares.DecodeRole(token)
-	if decodeRole == "user" {
-		log.Println("role restricted:", "user tidak bisa mengakses fitur ini")
-		return errors.New("user tidak bisa mengakses fitur ini")
-
-	} else if decodeRole == "operator" {
-		log.Print(decodeRole)
-		err := s.v.Struct(&editSlot)
-		if err != nil {
-			log.Println("error validasi", err.Error())
-			return err
-		}
-		err = s.m.Edit(decodeEmail, parkingSlotID, editSlot)
-		if err != nil {
-			return errors.New(helper.ServerGeneralError)
-		}
+	err := s.m.Edit(decodeEmail, parkingSlotID, editSlot)
+	if err != nil {
+		return errors.New(helper.ServerGeneralError)
 	}
 
 	return nil
