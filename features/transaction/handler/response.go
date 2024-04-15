@@ -31,5 +31,6 @@ type FinishPaymentResponse struct {
 	Floor          int    `json:"floor"`
 	Slot           int    `json:"slot"`
 	Price          int    `json:"price"`
+	ImageLoc       string `json:"image_loc"`
 	// StatusMessage  string `json:"status_message"`
 }
