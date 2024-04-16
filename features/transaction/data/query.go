@@ -28,6 +28,14 @@ func (m *model) GetReservation(id uint) (reservation.Reservation, error) {
 	return result, nil
 }
 
+func (m *model) GetReserByTrans(id uint) (transaction.Transaction, error) {
+	var result transaction.Transaction
+	if err := m.connection.Where("id = ?", id).Last(&result).Error; err != nil {
+		return transaction.Transaction{}, err
+	}
+	return result, nil
+}
+
 func (m *model) GetParkingSlot(id uint) (parkingslot.ParkingSlot, error) {
 	var result parkingslot.ParkingSlot
 	if err := m.connection.Where("id = ?", id).Find(&result).Error; err != nil {

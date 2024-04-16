@@ -114,24 +114,34 @@ func (s *service) PaymentCallback(payment transaction.CallbackRequest) error {
 	// 	return err
 	// }
 
+	log.Println(payment.OrderID)
 	resGet, err := s.m.GetIDByOrderID(payment.OrderID)
 	if err != nil {
 		log.Println("error getting ID by orderID:", err)
 		return err
 	}
 
-	res, err := s.m.GetReservation(resGet.ID)
+	resRes, err := s.m.GetReserByTrans(resGet.ID)
+	if err != nil {
+		log.Println("error getting reservation by tranaction id:", err)
+		return err
+	}
+
+	log.Println(resGet.ID)
+	res, err := s.m.GetReservation(resRes.ReservationID)
 	if err != nil {
 		log.Println("error getting reservation:", err)
 		return err
 	}
 
+	log.Println(res.ParkingSlotID)
 	result, err := s.m.GetParkingSlot(res.ParkingSlotID)
 	if err != nil {
 		log.Println("error getting parking slot:", err)
 		return err
 	}
 
+	log.Println(result.ID)
 	var newData parkingslot.ParkingSlot
 	newData.Status = "available"
 	// newData.ID = uint(num)
@@ -173,7 +183,13 @@ func (s *service) Get(id int, token *jwt.Token) (any, error) {
 			return reservation.Reservation{}, errors.New("data tidak valid")
 		}
 
-		res, err := s.m.GetReservation(uint(id))
+		resRes, err := s.m.GetReserByTrans(uint(id))
+		if err != nil {
+			log.Println("error getting reservation by tranaction id:", err)
+			return transaction.Transaction{}, err
+		}
+
+		res, err := s.m.GetReservation(resRes.ReservationID)
 		if err != nil {
 			log.Println("error getting reservation:", err)
 			return reservation.Reservation{}, err
@@ -198,6 +214,8 @@ func (s *service) Get(id int, token *jwt.Token) (any, error) {
 		}
 
 		if res.Email != email {
+			log.Println(res.Email)
+			log.Println(email)
 			log.Println("error access email:", "anda tidak diizinkan mengakses ini")
 			return nil, errors.New("anda tidak diizinkan mengakses profil pengguna lainn")
 		}

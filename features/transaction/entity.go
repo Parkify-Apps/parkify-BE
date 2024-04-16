@@ -24,6 +24,7 @@ type TransactionServices interface {
 
 type TransactionModel interface {
 	GetReservation(id uint) (reservation.Reservation, error)
+	GetReserByTrans(id uint) (Transaction, error)
 	GetParkingSlot(id uint) (parkingslot.ParkingSlot, error)
 	GetParking(id uint) (parking.Parking, error)
 	CreateTransaction(newData Transaction, reservationID uint) (Transaction, error)
