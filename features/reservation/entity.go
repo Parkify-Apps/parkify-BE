@@ -47,4 +47,5 @@ type ReservationResponse struct {
 	ImageLoc      string `json:"image_loc"`
 	Location      string `json:"location"`
 	City          string `json:"city"`
+	Status        string `json:"payment_status"`
 }

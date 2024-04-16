@@ -79,7 +79,7 @@ func (ct *controller) GetHistory() echo.HandlerFunc {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFormat(http.StatusInternalServerError, helper.ServerGeneralError, nil))
 		}
 
-		return c.JSON(http.StatusCreated, helper.ResponseFormat(http.StatusCreated, "success get reservation history", result))
+		return c.JSON(http.StatusOK, helper.ResponseFormat(http.StatusOK, "success get reservation history", result))
 	}
 }
 
@@ -104,6 +104,6 @@ func (ct *controller) GetReservationInfo() echo.HandlerFunc {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFormat(http.StatusInternalServerError, helper.ServerGeneralError, nil))
 		}
 
-		return c.JSON(http.StatusCreated, helper.ResponseFormat(http.StatusCreated, "success get reservation info", result))
+		return c.JSON(http.StatusOK, helper.ResponseFormat(http.StatusOK, "success get reservation info", result))
 	}
 }

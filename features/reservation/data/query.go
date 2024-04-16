@@ -63,7 +63,7 @@ func (rm *model) Create(email string, newData reservation.Reservation) (reservat
 func (rm *model) GetHistory(email string) ([]reservation.ReservationResponse, error) {
 	var response []reservation.ReservationResponse
 
-	err := rm.connection.Raw("SELECT reservations.id as id, reservations.email, reservations.parking_slot_id, parking_slots.vehicle_type, parking_slots.floor, parking_slots.slot, parking_slots.price, parkings.id as parking_id, parkings.image_loc, parkings.location, parkings.city FROM reservations JOIN parking_slots ON reservations.parking_slot_id = parking_slots.id JOIN parkings ON parking_slots.parking_id = parkings.id where reservations.email = ? order by 1 desc", email).Scan(&response).Error
+	err := rm.connection.Raw("SELECT reservations.id as id, reservations.email, reservations.parking_slot_id, parking_slots.vehicle_type, parking_slots.floor, parking_slots.slot, parking_slots.price, parkings.id as parking_id, parkings.image_loc, parkings.location, parkings.city, transactions.status as status FROM reservations JOIN parking_slots ON reservations.parking_slot_id = parking_slots.id JOIN parkings ON parking_slots.parking_id = parkings.id JOIN transactions ON reservations.id = transactions.reservation_id where reservations.email = ? order by 1 desc", email).Scan(&response).Error
 	if err != nil {
 		return nil, err
 	}
