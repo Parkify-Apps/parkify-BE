@@ -201,6 +201,7 @@ func (s *service) Get(id int, token *jwt.Token) (any, error) {
 			return nil, errors.New("anda tidak diizinkan mengakses profil pengguna lainn")
 		}
 
+		response.TransactionID = resGet.ID
 		response.VirtualAccount = resGet.VirtualAccount
 		response.PaymentMethod = resGet.PaymentMethod
 		response.OrderID = resGet.OrderID

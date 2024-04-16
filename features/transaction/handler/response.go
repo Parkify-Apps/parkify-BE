@@ -19,6 +19,7 @@ type PaymentResponse struct {
 }
 
 type FinishPaymentResponse struct {
+	TransactionID  uint `json:"transaction_id"`
 	OrderID        string
 	VirtualAccount string `json:"virtual_account"`
 	PaymentMethod  string `json:"payment_method"`
