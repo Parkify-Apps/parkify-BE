@@ -213,6 +213,7 @@ func (s *service) Get(id int, token *jwt.Token) (any, error) {
 		response.ParkingID = result.ParkingID
 		response.ParkingSlotID = res.ParkingSlotID
 		response.ReservationID = res.ID
+		response.ImageLoc = resultP.ImageLoc
 
 	}
 	return response, nil
