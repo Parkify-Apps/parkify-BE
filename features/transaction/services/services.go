@@ -198,8 +198,6 @@ func (s *service) Get(id int, token *jwt.Token) (any, error) {
 		}
 
 		if res.Email != email {
-			log.Print(res.Email)
-			log.Print(email)
 			log.Println("error access email:", "anda tidak diizinkan mengakses ini")
 			return nil, errors.New("anda tidak diizinkan mengakses profil pengguna lainn")
 		}
