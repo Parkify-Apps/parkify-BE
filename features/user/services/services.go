@@ -18,11 +18,11 @@ type service struct {
 	v     *validator.Validate
 }
 
-func NewService(m user.UserModel, md middlewares.JwtInterface) user.UserService {
+func NewService(m user.UserModel, pm helper.PasswordManager, md middlewares.JwtInterface) user.UserService {
 	return &service{
 		model: m,
 		md: md,
-		pm:    helper.NewPasswordManager(),
+		pm:    pm,
 		v:     validator.New(),
 	}
 }

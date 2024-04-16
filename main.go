@@ -18,6 +18,7 @@ import (
 	"parkify-BE/features/user/data"
 	"parkify-BE/features/user/handler"
 	"parkify-BE/features/user/services"
+	"parkify-BE/helper"
 	"parkify-BE/middlewares"
 	"parkify-BE/routes"
 	"parkify-BE/utils"
@@ -35,7 +36,7 @@ func main() {
 	// log.Print(md)
 
 	userData := data.New(db)
-	userService := services.NewService(userData, middlewares.NewMidlewareJWT())
+	userService := services.NewService(userData, helper.NewPasswordManager(), middlewares.NewMidlewareJWT())
 	userHandler := handler.NewUserHandler(userService)
 
 	parkingData := pd.New(db)
