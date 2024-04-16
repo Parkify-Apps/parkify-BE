@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"parkify-BE/features/transaction"
 	"parkify-BE/helper"
@@ -76,8 +77,8 @@ func (ct *controller) Get() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		token, ok := c.Get("user").(*jwt.Token)
 		if !ok {
-			return c.JSON(http.StatusBadRequest,
-				helper.ResponseFormat(http.StatusBadRequest, helper.UserInputError, nil))
+			return c.JSON(http.StatusUnauthorized,
+				helper.ResponseFormat(http.StatusUnauthorized, helper.TokenError, nil))
 		}
 
 		id, err := strconv.Atoi(c.Param("id"))
@@ -88,8 +89,12 @@ func (ct *controller) Get() echo.HandlerFunc {
 
 		response, err := ct.s.Get(id, token)
 		if err != nil {
+			if strings.Contains(err.Error(), "mengakses profil"){
+				return c.JSON(http.StatusInternalServerError,
+					helper.ResponseFormat(http.StatusInternalServerError, err.Error(), nil))
+			}
 			return c.JSON(http.StatusBadRequest,
-				helper.ResponseFormat(http.StatusBadRequest, helper.UserInputError, nil))
+				helper.ResponseFormat(http.StatusBadRequest, helper.ServerGeneralError, nil))
 		}
 
 		return c.JSON(http.StatusOK,

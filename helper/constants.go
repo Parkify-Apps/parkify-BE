@@ -7,4 +7,6 @@ const (
 	ServiceGeneralError  = "terjadi kendala saat memproses data"
 
 	ServerGeneralError = "terjadi kesalahan pada proses server"
+
+	TokenError = "token tidak sesuai"
 )
