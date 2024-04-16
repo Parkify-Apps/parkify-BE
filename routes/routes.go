@@ -80,9 +80,7 @@ func transactionRoute(c *echo.Echo, t transaction.TransactionController) {
 	c.POST("/transaction", t.Transaction(), echojwt.WithConfig(echojwt.Config{
 		SigningKey: []byte(config.JWTSECRET),
 	}))
-	c.POST("/transaction/payment-callback", t.PaymentCallback(), echojwt.WithConfig(echojwt.Config{
-		SigningKey: []byte(config.JWTSECRET),
-	}))
+	c.POST("/transaction/payment-callback", t.PaymentCallback())
 	c.GET("/transaction/:id", t.Get(), echojwt.WithConfig(echojwt.Config{
 		SigningKey: []byte(config.JWTSECRET),
 	}))
