@@ -114,6 +114,10 @@ func (s *service) PaymentCallback(payment transaction.CallbackRequest) error {
 	// 	return err
 	// }
 
+	if payment.TransactionStatus == "pending" {
+		return nil
+	}
+
 	resGet, err := s.m.GetIDByOrderID(payment.OrderID)
 	if err != nil {
 		log.Println("error getting ID by orderID:", err)
@@ -131,7 +135,7 @@ func (s *service) PaymentCallback(payment transaction.CallbackRequest) error {
 		log.Println("error getting reservation:", err)
 		return err
 	}
-	
+
 	result, err := s.m.GetParkingSlot(res.ParkingSlotID)
 	if err != nil {
 		log.Println("error getting parking slot:", err)
