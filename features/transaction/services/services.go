@@ -69,7 +69,7 @@ func (s *service) Transaction(payment transaction.PaymentRequest, token *jwt.Tok
 			return nil, errors.New("anda tidak diizinkan mengakses profil pengguna lainn")
 		}
 
-		idBook := "test" + str
+		idBook := "abc" + str
 		resp, err := s.mdtrans.PaymentVABCA(idBook, result.Price)
 		if err != nil {
 			log.Println("error payment:", err)

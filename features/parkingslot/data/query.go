@@ -22,7 +22,7 @@ func (psm *model) Add(email string, newSlot parkingslot.ParkingSlot) error {
 	var existingSlot ParkingSlot
 	if err := psm.connection.
 		Model(&ParkingSlot{}).
-		Where("floor = ? AND slot = ?", newSlot.Floor, newSlot.Slot).
+		Where("email = ? AND floor = ? AND slot = ?", email, newSlot.Floor, newSlot.Slot).
 		First(&existingSlot).Error; err != nil {
 		if !errors.Is(err, gorm.ErrRecordNotFound) {
 			return err // Error other than "record not found"
