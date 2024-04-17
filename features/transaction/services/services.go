@@ -30,7 +30,7 @@ func NewServices(model transaction.TransactionModel, m utils.PaymentFunc) transa
 }
 
 func (s *service) Transaction(payment transaction.PaymentRequest, token *jwt.Token) (any, error) {
-	email := middlewares.DecodeToken(token)
+	email := middlewares.NewMidlewareJWT().DecodeToken(token)
 	if email == "" {
 		log.Println("error decode token:", "token tidak ditemukan")
 		return reservation.Reservation{}, errors.New("data tidak valid")
@@ -59,7 +59,7 @@ func (s *service) Transaction(payment transaction.PaymentRequest, token *jwt.Tok
 
 	var response handler.PaymentResponse
 
-	decodeRole := middlewares.DecodeRole(token)
+	decodeRole := middlewares.NewMidlewareJWT().DecodeRole(token)
 	if decodeRole == "operator" {
 		log.Println("role restricted:", "operator tidak bisa mengakses fitur ini")
 		return reservation.Reservation{}, errors.New("operator tidak bisa mengakses fitur ini")
@@ -131,7 +131,7 @@ func (s *service) PaymentCallback(payment transaction.CallbackRequest) error {
 		log.Println("error getting reservation:", err)
 		return err
 	}
-	
+
 	result, err := s.m.GetParkingSlot(res.ParkingSlotID)
 	if err != nil {
 		log.Println("error getting parking slot:", err)
@@ -167,13 +167,13 @@ func (s *service) PaymentCallback(payment transaction.CallbackRequest) error {
 func (s *service) Get(id int, token *jwt.Token) (any, error) {
 	var response handler.FinishPaymentResponse
 
-	decodeRole := middlewares.DecodeRole(token)
+	decodeRole := middlewares.NewMidlewareJWT().DecodeRole(token)
 	if decodeRole == "operator" {
 		log.Println("role restricted:", "operator tidak bisa mengakses fitur ini")
 		return nil, errors.New("operator tidak bisa mengakses fitur ini")
 	} else if decodeRole == "user" {
 
-		email := middlewares.DecodeToken(token)
+		email := middlewares.NewMidlewareJWT().DecodeToken(token)
 		if email == "" {
 			log.Println("error decode token:", "token tidak ditemukan")
 			return reservation.Reservation{}, errors.New("data tidak valid")

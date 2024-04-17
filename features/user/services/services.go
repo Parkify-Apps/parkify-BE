@@ -73,7 +73,7 @@ func (s *service) Login(loginData user.User) (user.User, string, error) {
 		return user.User{}, "", errors.New(helper.UserCredentialError)
 	}
 
-	token, err := middlewares.GenerateJWT(dbData.Email, dbData.Role)
+	token, err := middlewares.NewMidlewareJWT().GenerateJWT(dbData.Email, dbData.Role)
 	if err != nil {
 		log.Println("error generate", err.Error())
 		return user.User{}, "", errors.New(helper.ServiceGeneralError)
@@ -83,7 +83,7 @@ func (s *service) Login(loginData user.User) (user.User, string, error) {
 }
 
 func (s *service) Profile(token *jwt.Token) (user.User, error) {
-	decodeEmail := middlewares.DecodeToken(token)
+	decodeEmail := middlewares.NewMidlewareJWT().DecodeToken(token)
 	if decodeEmail == "" {
 		log.Println("error decode token:", "token tidak ditemukan")
 		return user.User{}, errors.New("data tidak valid")
@@ -102,7 +102,7 @@ func (s *service) Profile(token *jwt.Token) (user.User, error) {
 }
 
 func (s *service) UpdateProfile(token *jwt.Token, newData user.User) error {
-	email := middlewares.DecodeToken(token)
+	email := middlewares.NewMidlewareJWT().DecodeToken(token)
 	if email == "" {
 		log.Println("error decode token:", "token tidak ditemukan")
 		return errors.New("data tidak valid")
@@ -135,7 +135,7 @@ func (s *service) UpdateProfile(token *jwt.Token, newData user.User) error {
 }
 
 func (s *service) DeleteAccount(token *jwt.Token) error {
-	email := middlewares.DecodeToken(token)
+	email := middlewares.NewMidlewareJWT().DecodeToken(token)
 	if email == "" {
 		log.Println("error decode token:", "token tidak ditemukan")
 		return errors.New("data tidak valid")

@@ -18,6 +18,7 @@ import (
 	"parkify-BE/features/user/data"
 	"parkify-BE/features/user/handler"
 	"parkify-BE/features/user/services"
+	"parkify-BE/middlewares"
 	"parkify-BE/routes"
 	"parkify-BE/utils"
 
@@ -42,7 +43,7 @@ func main() {
 	parkingHandler := ph.NewHandler(parkingService)
 
 	parkingSlotData := parking_slot_data.New(db)
-	parkingSlotService := parking_slot_services.ParkingSlotService(parkingSlotData)
+	parkingSlotService := parking_slot_services.ParkingSlotService(parkingSlotData, middlewares.NewMidlewareJWT())
 	parkingSlotHandler := parking_slot_handler.NewHandler(parkingSlotService)
 
 	reservationData := reservation_data.New(db)

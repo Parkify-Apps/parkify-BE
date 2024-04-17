@@ -24,7 +24,7 @@ func ReservationService(model reservation.ReservationModel) reservation.Reservat
 }
 
 func (s *services) Create(token *jwt.Token, newData reservation.Reservation) (reservation.Reservation, error) {
-	decodeEmail := middlewares.DecodeToken(token)
+	decodeEmail := middlewares.NewMidlewareJWT().DecodeToken(token)
 	if decodeEmail == "" {
 		log.Println("error decode token:", "token tidak ditemukan")
 		return reservation.Reservation{}, errors.New("data tidak valid")
@@ -39,7 +39,7 @@ func (s *services) Create(token *jwt.Token, newData reservation.Reservation) (re
 }
 
 func (s *services) GetHistory(token *jwt.Token) ([]reservation.ReservationResponse, error) {
-	decodeEmail := middlewares.DecodeToken(token)
+	decodeEmail := middlewares.NewMidlewareJWT().DecodeToken(token)
 	if decodeEmail == "" {
 		log.Println("error decode token:", "token tidak ditemukan")
 		return nil, errors.New("data tidak valid")
@@ -54,7 +54,7 @@ func (s *services) GetHistory(token *jwt.Token) ([]reservation.ReservationRespon
 }
 
 func (s *services) GetReservationInfo(token *jwt.Token, reservationID string) (reservation.ReservationResponse, error) {
-	decodeEmail := middlewares.DecodeToken(token)
+	decodeEmail := middlewares.NewMidlewareJWT().DecodeToken(token)
 	if decodeEmail == "" {
 		log.Println("error decode token:", "token tidak ditemukan")
 		return reservation.ReservationResponse{}, errors.New("data tidak valid")
