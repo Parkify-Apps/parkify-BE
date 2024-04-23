@@ -1,11 +1,11 @@
 package data
 
 import (
-	
 	"parkify-BE/features/parking"
 	"parkify-BE/features/parkingslot"
 	"parkify-BE/features/reservation"
 	"parkify-BE/features/transaction"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -53,7 +53,9 @@ func (m *model) GetParking(id uint) (parking.Parking, error) {
 }
 
 func (m *model) CreateTransaction(newData transaction.Transaction, reservationID uint) (transaction.Transaction, error) {
-	if err := m.connection.Create(&newData).Error; err != nil {
+	qry := m.connection.Model(&Transaction{}).Where("reservation_id = ?", reservationID).Update("created_at", time.Now()).Update("order_id", newData.OrderID).Update("payment_method", newData.PaymentMethod).Update("price", newData.Price).Update("virtual_account", newData.VirtualAccount)
+
+	if err := qry.Error; err != nil {
 		return transaction.Transaction{}, err
 	}
 

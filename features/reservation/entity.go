@@ -19,6 +19,7 @@ type ReservationModel interface {
 	Create(email string, newData Reservation) (Reservation, error)
 	GetHistory(email string) ([]ReservationResponse, error)
 	GetReservationInfo(email string, reservationID string) (ReservationResponse, error)
+	CreateTransactionTable(email string, reservationID uint) error
 }
 
 type ReservationServices interface {

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"parkify-BE/features/parkingslot/data"
 	"parkify-BE/features/reservation"
+	"parkify-BE/features/transaction"
 	"strconv"
 
 	"gorm.io/gorm"
@@ -82,4 +83,18 @@ func (rm *model) GetReservationInfo(email string, reservationID string) (reserva
 	}
 
 	return getReservationInfo, err
+}
+
+func (rm *model) CreateTransactionTable(email string, reservationID uint) error {
+
+	var inputTransactionData = transaction.Transaction{
+		ReservationID: reservationID,
+	}
+
+	qry := rm.connection.Create(&inputTransactionData)
+	if err := qry.Error; err != nil {
+		return err
+	}
+
+	return nil
 }

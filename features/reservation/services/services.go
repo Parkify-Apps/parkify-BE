@@ -35,6 +35,11 @@ func (s *services) Create(token *jwt.Token, newData reservation.Reservation) (re
 		return reservation.Reservation{}, errors.New(helper.ServerGeneralError)
 	}
 
+	err = s.m.CreateTransactionTable(decodeEmail, result.ID)
+	if err != nil {
+		return reservation.Reservation{}, errors.New(helper.ServerGeneralError)
+	}
+
 	return result, nil
 }
 
