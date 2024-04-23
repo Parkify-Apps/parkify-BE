@@ -17,6 +17,8 @@ servers:
 tags:
   - name: user
     description: Organize Data User
+  - name: login
+    description: Login Using Email And Password
   - name: parking
     description: Organize Data Parking
   - name: parkingslot
@@ -25,6 +27,7 @@ tags:
     description: Organize Data Transaction
   - name: reservation
     description: Organize Booking
+  - name: callback midtrans
 paths:
   /users:
     post:
@@ -88,8 +91,10 @@ paths:
               example: 
                 code: 200
                 data:
+                  user_id: 1
                   fullname: "Muhamad Khomsin Ariseno"
                   email: "khomsin.ariseno@gmail.com"
+                  role: "user"
                 message: "Successfully Get MyProfile"
         '400':
           $ref: '#/components/responses/400'
@@ -102,14 +107,14 @@ paths:
         - bearerAuth: []
       summary: Delete User
       responses:
-        '200':
+        '201':
           description: "Successfully Delete User"
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
               example:
-                code: 200
+                code: 201
                 message: "Successfully Delete User"
         '400':
           $ref: '#/components/responses/400'
@@ -139,14 +144,14 @@ paths:
               fullname: "Khomsin Ariseno"
               password: "password123"
       responses:
-        '200':
+        '201':
           description: "Successfully Update User"
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
               example:
-                code: 200
+                code: 201
                 message: "Successfully Update User"
         '400':
           $ref: '#/components/responses/400'
@@ -155,7 +160,7 @@ paths:
   /login:
     post:
       tags:
-        - user
+        - login
       summary: Login Using email and Password
       description: Input Your email and Password
       requestBody:
@@ -289,17 +294,23 @@ paths:
                   location: "Kokas"
                   city: "Jakarta"
                   imageloc: "urlimage1.jpg"
-                  slot:
-                  - vehicle_type: "Motorcycle"
-                    floor: 2
-                    slot: 5
-                    price: 5000
-                    status: "available"
-                  - vehicle_type: "Car"
-                    floor: 2
-                    slot: 10
-                    price: 10000
-                    status: "not available"
+                  parking_slots:
+                  - ID: 1
+                    Email: "rizal@gmail.com"
+                    ParkingID: 1
+                    VehicleType: "Motorcycle"
+                    Floor: 2
+                    Slot: 5
+                    Price: 5000
+                    Status: "available"
+                  - ID: 1
+                    Email: "rizal@gmail.com"
+                    ParkingID: 1
+                    VehicleType: "Car"
+                    Floor: 2
+                    Slot: 10
+                    Price: 10000
+                    Status: "not available"
                 message: "Successfully Get All Parking"
         '400':
           $ref: '#/components/responses/400'
@@ -334,14 +345,14 @@ paths:
                   type: string
                   format: binary
       responses:
-        '201':
+        '200':
           description: "Parking Edited Successfully"
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
               example: 
-                code: 201
+                code: 200
                 message: "Parking Edited Successfully"
         '400':
           $ref: '#/components/responses/400'
@@ -407,16 +418,22 @@ paths:
               example: 
                 code: 200
                 data:
-                  - vehicle_type: "Motorcycle"
-                    floor: 1
-                    slot: 5
-                    price: 5000
-                    status: "available"
-                  - vehicle_type: "Car"
-                    floor: 2
-                    slot: 10
-                    price: 10000
-                    status: "not available"
+                  - ID: 1
+                    Email: "rizal@gmail.com"
+                    ParkingID: 1
+                    VehicleType: "Motorcycle"
+                    Floor: 1
+                    Slot: 5
+                    Price: 5000
+                    Status: "available"
+                  - ID: 1
+                    Email: "rizal@gmail.com"
+                    ParkingID: 1
+                    VehicleType: "Car"
+                    Floor: 2
+                    Slot: 10
+                    Price: 10000
+                    Status: "not available"
                 message: "Success Get All Parking Slot"
         '400':
           $ref: '#/components/responses/400'
@@ -505,14 +522,11 @@ paths:
               properties:
                 reservation_id:
                   type: integer
-                price:
-                  type: integer
                 payment:
                   type: string
             example:
               reservation_id: 1
-              price: 10000
-              payment: "VA BCA"
+              payment_method: "VA BCA"
       responses:
         '201':
           description: "Transaction Successful"
@@ -523,9 +537,65 @@ paths:
               example: 
                 code: 201
                 data:
-                  va_number: "59210833923"
+                  OrderID: "ab12"
+                  transaction_id: 1
+                  virtual_account:
+                    - bank: "bca"
+                      va_number: "59210833923"
+                  parking_id: 1
+                  parkingslot_id: 1
+                  location: "Gelora Bung Karno"
+                  city: "Jakarta"
+                  vehicle_type: "car"
+                  floor: 1
+                  slot: 1
+                  price: 10000
                   status_message: "Success, Bank Transfer transaction is created"
-                message: "Transaction Success"
+                message: "Transaction Created"
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+  /transaction/{transactionID}:
+    get:
+      tags: 
+        - transaction
+      parameters:
+        - name: transactionID
+          in: path
+          description: ID transaction yang ingin di lihat
+          required: true
+          schema:
+            type: string
+          example: 1
+      security: 
+        - bearerAuth: []
+      summary: Get Transaction Info
+      responses:
+        '200':
+          description: "Success Get Transaction Info"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiDataResponse'
+              example: 
+                code: 200
+                data:
+                  transaction_id: 1
+                  OrderID: "ab12"
+                  virtual_account: "59210833923"
+                  payment_method: "VA BCA"
+                  parking_id: 1
+                  parkingslot_id: 1
+                  reservation_id: 1
+                  location: "Gelora Bung Karno"
+                  city: "Jakarta"
+                  vehicle_type: "car"
+                  floor: 1
+                  slot: 1
+                  price: 10000
+                  image_loc: "urlimage21"
+                message: "Success Get Transaction Info"
         '400':
           $ref: '#/components/responses/400'
         '500':
@@ -554,9 +624,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'
+                $ref: '#/components/schemas/ApiDataResponse'
               example: 
                 code: 201
+                data:
+                  reservation_id: 1
                 message: "Success Reservation"
         '400':
           $ref: '#/components/responses/400'
@@ -578,27 +650,42 @@ paths:
               example: 
                 code: 200
                 data:
-                  - reservation_id: 1
-                    parking_id: 1
-                    parkingslot_id: 1
+                  - reservation_id: 3
+                    email: "khomsin@gmail.com"
+                    parking_slot_id: 1
                     vehicle_type: "car"
                     floor: 1
                     slot: 1
                     price: 10000
-                  - reservation_id: 2
                     parking_id: 1
-                    parkingslot_id: 2
+                    location: "RS Fatmawati"
+                    city: "Jakarta"
+                    image_loc: "urlimage3"
+                    payment_status: ""
+                  - reservation_id: 2
+                    email: "khomsin@gmail.com"
+                    parking_slot_id: 2
                     vehicle_type: "car"
                     floor: 1
                     slot: 2
                     price: 10000
-                  - reservation_id: 3
-                    parking_id: 1
-                    parkingslot_id: 3
-                    vehicle_type: "motorcycle"
+                    parking_id: 2
+                    location: "Senayan City"
+                    city: "Jakarta"
+                    image_loc: "urlimage2"
+                    payment_status: "success"
+                  - reservation_id: 1
+                    email: "khomsin@gmail.com"
+                    parking_slot_id: 3
+                    vehicle_type: "car"
                     floor: 2
                     slot: 3
-                    price: 5000
+                    price: 10000
+                    parking_id: 3
+                    location: "Gelora Bung Karno"
+                    city: "Jakarta"
+                    image_loc: "urlimage1"
+                    status: "success"
                 message: "Success Get All Reservation Info"
         '400':
           $ref: '#/components/responses/400'
@@ -630,42 +717,17 @@ paths:
                 code: 200
                 data:
                   reservation_id: 1
-                  parking_id: 1
-                  parkingslot_id: 1
+                  email: "khomsin@gmail.com"
+                  parking_slot_id: 3
                   vehicle_type: "car"
-                  floor: 1
-                  slot: 1
+                  floor: 2
+                  slot: 3
                   price: 10000
+                  parking_id: 3
+                  location: "Gelora Bung Karno"
+                  city: "Jakarta"
+                  image_loc: "urlimage1"
                 message: "Success Get All Reservation Info"
-        '400':
-          $ref: '#/components/responses/400'
-        '500':
-          $ref: '#/components/responses/500'
-  /checkout:
-    get:
-      tags: 
-        - reservation
-      security:
-        - bearerAuth: []
-      summary: Get checkout Info
-      responses:
-        '200':
-          description: "Successfully Get Checkout Info"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiDataResponse'
-              example: 
-                code: 200
-                data:
-                  reservation_id: 1
-                  parking_id: 1
-                  parkingslot_id: 1
-                  vehicle_type: "car"
-                  floor: 1
-                  slot: 1
-                  price: 10000
-                message: "Success Get Checkout Info"
         '400':
           $ref: '#/components/responses/400'
         '500':
