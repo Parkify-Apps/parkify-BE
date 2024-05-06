@@ -8,7 +8,7 @@ import (
 	"parkify-BE/mocks"
 	"testing"
 
-	// "github.com/golang-jwt/jwt/v5"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -93,8 +93,8 @@ func TestLogin(t *testing.T) {
 		Email: "rizal@gmail.com", Password: "hallo"}
 	GenerateJWT := user.User{
 		Email: "rizal@gmail.com", Password: "hallo", Role: ""}
-	// Login := user.User{
-	// 	Email: "rizal@gmail.com", Password: "hahahaha"}
+	Login := user.User{
+		Email: "rizal@gmail.com", Password: "hahahaha"}
 
 	t.Run("Success login", func(t *testing.T) {
 		// insertData.Password = hashedPassword
@@ -132,16 +132,18 @@ func TestLogin(t *testing.T) {
 		assert.EqualError(t, err, helper.UserCredentialError)
 	})
 
-	// t.Run("Error compare password", func(t *testing.T) {
-	// 	pm.On("ComparePassword", insertData.Password, Login.Password).Return(gorm.ErrInvalidData).Once()
+	t.Run("Error compare password", func(t *testing.T) {
+		model.On("Login", insertData.Email).Return(Login, nil).Once()
+		pm.On("ComparePassword", insertData.Password, Login.Password).Return(gorm.ErrInvalidData).Once()
 
-	// 	user, str, err := srv.Login(insertData)
+		user, str, err := srv.Login(insertData)
 
-	// 	pm.AssertExpectations(t)
+		pm.AssertExpectations(t)
+		model.AssertExpectations(t)
 
-	// 	assert.Error(t, err, user, str)
-	// 	assert.EqualError(t, err, helper.UserCredentialError)
-	// })
+		assert.Error(t, err, user, str)
+		assert.EqualError(t, err, helper.UserCredentialError)
+	})
 
 	// t.Run("Error generate jwt", func(t *testing.T) {
 	// 	md.On("GenerateJWT", GenerateJWT.Email, GenerateJWT.Role).Return("rizal@gmail.com, user", nil).Once()
@@ -160,22 +162,23 @@ func TestProfile(t *testing.T) {
 	pm := mocks.NewPasswordManager(t)
 	md := mocks.NewJwtInterface(t)
 	// rPm := helper.NewPasswordManager()
-	// srv := services.NewService(model, pm, md)
+	srv := services.NewService(model, pm, md)
 
-	// token := *jwt.Token
+	token := &jwt.Token{}
 	email := "rizal@gmail.com"
 	profile := user.User{Email: "rizal@gmail.com", Password: "hallo"}
 
 	t.Run("Success get profile", func(t *testing.T) {
-		// md.On("DecodeToken", token).Return(email).Once()
+		md.On("DecodeToken", token).Return("rizal@gmail.com").Once()
 		model.On("Profile", email).Return(profile, nil).Once()
 
-		// user, err := srv.Profile(token)
+		user, err := srv.Profile(token)
 
 		md.AssertExpectations(t)
-		pm.AssertExpectations(t)
+		model.AssertExpectations(t)
 
-		// assert.Error(t, err, user)
+		assert.Nil(t, err, "seharusnya nilainya nil")
+		assert.Equal(t, "rizal@gmail.com", user.Email, "seharusnya nilainya adalah rizal@gmail.com")
 
 	})
 }
