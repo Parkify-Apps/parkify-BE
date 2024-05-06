@@ -27,7 +27,7 @@ Parkify is a mobile application designed to streamline access to parking locatio
 ![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)
 ![Swagger](https://img.shields.io/badge/-Swagger-%23Clojure?style=for-the-badge&logo=swagger&logoColor=white)
 ![Postman](https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white)
-![Midtrans](https://img.shields.io/badge/Midtrans-black)
+![Midtrans](https://img.shields.io/badge/MIDTRANS-black)
 
 
 # You Can Try API
