@@ -1,6 +1,6 @@
 #  Parkify 
 <div align="left">
-<img src="ParkifyLogo.png">
+<img src="Parkify.png">
 
 
 # 🗺️ About The Project 🗺️
