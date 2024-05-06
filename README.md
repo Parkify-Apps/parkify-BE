@@ -1,5 +1,5 @@
 #  Parkify 
-<div align="center">
+<div align="left">
 <img src="ParkifyLogo.png">
 
 
@@ -30,7 +30,7 @@ Parkify is a mobile application designed to streamline access to parking locatio
 ![Midtrans](https://img.shields.io/badge/Midtrans-black)
 
 
-# You Can Try Api
+# You Can Try API
 1. open api : https://app.swaggerhub.com/apis/RAICHUGO25/Parkify-Apps/1.0.0#/
 2. base url : https://parkify.online/
 
@@ -38,9 +38,9 @@ Parkify is a mobile application designed to streamline access to parking locatio
 ![ERD](https://github.com/Parkify-Apps/parkify-BE/blob/main/ERD/parkify.jpg)
 
 # Contributor
-- Muhamad Rizal  :  [![GitHub](https://img.shields.io/badge/heri-Budiyana-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/muhamadrizaaal)
+- Muhamad Rizal  :  [![GitHub](https://img.shields.io/badge/muhamadrizaaal-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/muhamadrizaaal)
 
-- Muhamad Khomsin Ariseno  :  [![GitHub](https://img.shields.io/badge/nur-fatchurohman-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Onesira25)
+- Muhamad Khomsin Ariseno  :  [![GitHub](https://img.shields.io/badge/Onesira25-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Onesira25)
 
 
 ## Run Locally
